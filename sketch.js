@@ -4,8 +4,9 @@ function setup() {
 }
 
 function draw() {
-  background(220);
+	background(220);
 }
+
 
 function hurdleQuestion(max,min,addition,multipication,negatives,variables){
 

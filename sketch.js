@@ -1,6 +1,6 @@
 function setup() {
   createCanvas(400, 400);
-  hurdleQuestion(1,5,3,4,5,100000000)
+  hurdleQuestion(1,5,3,4,5,3)
 }
 
 function draw() {

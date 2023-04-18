@@ -1,5 +1,4 @@
 class Runner {
-
 	constructor() {
 		this.x = 0;
 		this.y = 0;
@@ -65,9 +64,15 @@ class Runner {
 
 let data;
 let sheet;
-let frames = [];
+
+let sheets = [];
+let animations = [];
 
 let sprite;
+
+let wd = window.innerWidth;
+let hig = window.innerHeight;
+let guess = "";
 
 function preload() {
 	sheets.push([
@@ -109,7 +114,21 @@ function draw() {
 	push();
 	strokeWeight(10);
 	line(0, (height / 3) * 2, width, (height / 3) * 2);
-	sprite.animate(width / 4 - sprite.w / 2, (height / 3) * 2 - sprite.h - 5);
+	if (lever) {
+		if (3 < sprite.frame) {
+			let frames = 10;
+			if (frames > sprite.hangFrame) {
+				sprite.hang(50, 100, frames);
+			} else {
+				sprite.hangFrame = 0;
+				lever = !lever;
+			}
+		} else {
+			sprite.animate(animations[1], 100);
+		}
+	} else {
+		sprite.animate(animations[0], 100);
+	}
 	pop();
 	hurdleAsk();
 }

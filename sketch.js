@@ -2,12 +2,14 @@ class Runner {
 	constructor() {
 		this.x = 0;
 		this.y = 0;
+		this.addY = 0;
 		this.w = 32;
 		this.h = 32;
 		this.scale = 1;
 
 		this.stamp = millis();
 		this.frame = 0;
+		this.hangFrame = 0;
 	}
 
 	setScale(scale) {
@@ -30,43 +32,70 @@ class Runner {
 			this.frame = 0;
 		}
 
+		this.display(frames);
+	}
+
+	display(frames) {
 		push();
 		imageMode(CORNER);
 		let temp = frames[this.frame];
 		image(
 			temp,
 			this.x,
-			this.y,
+			this.y - this.addY,
 			temp.width * this.scale,
 			temp.height * this.scale
 		);
 		pop();
 	}
+
+	hang(altitude, interval, reps) {
+		if (this.stamp < millis()) {
+			this.stamp = millis() + interval;
+			this.hangFrame++;
+		}
+
+		this.addY =
+			altitude + altitude * cos(PI + ((2 * PI) / reps) * this.hangFrame);
+
+		this.display(animations[1]);
+	}
 }
 
 let data;
 let sheet;
-let run = [];
+
+let sheets = [];
+
+let animations = [];
 
 let sprite;
 
 function preload() {
-	data = loadXML("spritesheet/data.xml");
-	sheet = loadImage("spritesheet/sheet.png");
+	sheets.push([
+		loadXML("spritesheet/run/data.xml"),
+		loadImage("spritesheet/run/sheet.png"),
+	]);
+	sheets.push([
+		loadXML("spritesheet/jump/data.xml"),
+		loadImage("spritesheet/jump/sheet.png"),
+	]);
 }
 
 function setup() {
 	createCanvas(window.innerWidth, window.innerHeight);
 
-	let children = data.getChildren("sprite");
-	for (let i = 0; i < children.length; i++) {
-		let x = children[i].getNum("x");
-		let y = children[i].getNum("y");
-		let w = children[i].getNum("w");
-		let h = children[i].getNum("h");
-
-		run.push(sheet.get(x, y, w, h));
-	}
+	sheets.forEach((sheet, index) => {
+		let children = sheet[0].getChildren("sprite");
+		animations.push([]);
+		for (let i = 0; i < children.length; i++) {
+			let x = children[i].getNum("x");
+			let y = children[i].getNum("y");
+			let w = children[i].getNum("w");
+			let h = children[i].getNum("h");
+			animations[index].push(sheet[1].get(x, y, w, h));
+		}
+	});
 
 	sprite = new Runner();
 	sprite.setScale(8);
@@ -83,9 +112,19 @@ function draw() {
 	strokeWeight(10);
 	line(0, (height / 3) * 2, width, (height / 3) * 2);
 	if (lever) {
-		sprite.animate(run, 100);
+		if (3 < sprite.frame) {
+			let frames = 10;
+			if (frames > sprite.hangFrame) {
+				sprite.hang(50, 100, frames);
+			} else {
+				sprite.hangFrame = 0;
+				lever = !lever;
+			}
+		} else {
+			sprite.animate(animations[1], 100);
+		}
 	} else {
-		sprite.animate([run[0]], 100);
+		sprite.animate(animations[0], 100);
 	}
 	pop();
 }

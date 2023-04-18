@@ -1,31 +1,65 @@
 class Runner {
-  constructor(scale, interval) {
-    this.w = frames[0] * scale;
-    this.h = frames[0] * scale;
-    this.scale = scale;
-    this.interval = interval;
-    this.stamp = millis();
-    this.frame = 0;
-  }
+	constructor() {
+		this.x = 0;
+		this.y = 0;
+		this.addY = 0;
+		this.w = 32;
+		this.h = 32;
+		this.scale = 1;
 
-  animate(x, y) {
-    if (this.stamp + this.interval < millis()) {
-      this.stamp = millis();
-      this.frame++;
-    }
-    if (4 < this.frame) {
-      this.frame = 0;
-    }
+		this.stamp = millis();
+		this.frame = 0;
+		this.hangFrame = 0;
+	}
 
-    this.w = frames[this.frame].width * this.scale;
-    this.h = frames[this.frame].height * this.scale;
+	setScale(scale) {
+		this.w *= scale;
+		this.h *= scale;
+		this.scale = scale;
+	}
 
-    push();
-    imageMode(CORNER);
-    let temp = frames[this.frame];
-    image(temp, x, y, temp.width * this.scale, temp.height * this.scale);
-    pop();
-  }
+	setPos(x, y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	animate(frames, interval) {
+		if (this.stamp + interval < millis()) {
+			this.stamp = millis();
+			this.frame++;
+		}
+		if (frames.length - 1 < this.frame) {
+			this.frame = 0;
+		}
+
+		this.display(frames);
+	}
+
+	display(frames) {
+		push();
+		imageMode(CORNER);
+		let temp = frames[this.frame];
+		image(
+			temp,
+			this.x,
+			this.y - this.addY,
+			temp.width * this.scale,
+			temp.height * this.scale
+		);
+		pop();
+	}
+
+	hang(altitude, interval, reps) {
+		if (this.stamp < millis()) {
+			this.stamp = millis() + interval;
+			this.hangFrame++;
+		}
+
+		this.addY =
+			altitude + altitude * cos(PI + ((2 * PI) / reps) * this.hangFrame);
+
+		this.display(animations[1]);
+	}
 }
 
 let data;
@@ -34,41 +68,69 @@ let frames = [];
 
 let sprite;
 
-let wd = window.innerWidth;
-let hig = window.innerHeight;
-let guess = "";
-
 function preload() {
-  data = loadXML("spritesheet/data.xml");
-  sheet = loadImage("spritesheet/sheet.png");
+	sheets.push([
+		loadXML("spritesheet/run/data.xml"),
+		loadImage("spritesheet/run/sheet.png"),
+	]);
+	sheets.push([
+		loadXML("spritesheet/jump/data.xml"),
+		loadImage("spritesheet/jump/sheet.png"),
+	]);
 }
 
 function setup() {
-  createCanvas(window.innerWidth, window.innerHeight);
+	createCanvas(window.innerWidth, window.innerHeight);
 
-  let children = data.getChildren("sprite");
-  for (let i = 0; i < children.length; i++) {
-    let x = children[i].getNum("x");
-    let y = children[i].getNum("y");
-    let w = children[i].getNum("w");
-    let h = children[i].getNum("h");
+	sheets.forEach((sheet, index) => {
+		let children = sheet[0].getChildren("sprite");
+		animations.push([]);
+		for (let i = 0; i < children.length; i++) {
+			let x = children[i].getNum("x");
+			let y = children[i].getNum("y");
+			let w = children[i].getNum("w");
+			let h = children[i].getNum("h");
+			animations[index].push(sheet[1].get(x, y, w, h));
+		}
+	});
 
-    frames.push(sheet.get(x, y, w, h));
-  }
+	sprite = new Runner();
+	sprite.setScale(8);
+	sprite.setPos(width / 4 - sprite.w / 2, (height / 3) * 2 - sprite.h - 5);
 
-  sprite = new Runner(8, 100);
-  hurdleQuestion(1, 5, "+", 2);
+	hurdleQuestion(1, 5, "+", 3);
 }
 
+let lever = false;
 function draw() {
-  background(220);
+	background(220);
 
-  push();
-  strokeWeight(10);
-  line(0, (height / 3) * 2, width, (height / 3) * 2);
-  sprite.animate(width / 4 - sprite.w / 2, (height / 3) * 2 - sprite.h - 5);
-  pop();
+	push();
+	strokeWeight(10);
+	line(0, (height / 3) * 2, width, (height / 3) * 2);
+	if (lever) {
+		if (3 < sprite.frame) {
+			let frames = 10;
+			if (frames > sprite.hangFrame) {
+				sprite.hang(50, 100, frames);
+			} else {
+				sprite.hangFrame = 0;
+				lever = !lever;
+			}
+		} else {
+			sprite.animate(animations[1], 100);
+		}
+	} else {
+		sprite.animate(animations[0], 100);
+	}
+	pop();
+  
   hurdleAsk();
+}
+
+function mousePressed() {
+	lever = !lever;
+	sprite.frame = 0;
 }
 
 function hurdleQuestion(max, min, operator, variables) {

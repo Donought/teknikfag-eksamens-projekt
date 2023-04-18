@@ -62,6 +62,41 @@ class Runner {
 	}
 }
 
+class Obstacle {
+	constructor(interval, time) {
+		this.w = 50;
+		this.h = 100;
+		this.x = width;
+		this.y = (height / 3) * 2 - this.h;
+
+		this.interval = interval;
+		this.time = time;
+
+		this.stamp = millis();
+	}
+
+	move() {
+		if (this.stamp + interval < millis()) {
+			this.stamp = millis();
+			this.x -= (interval / time) * (width / 3) * 2 - this.w;
+		}
+	}
+
+	display() {
+		push();
+		rectMode(CORNER);
+		fill(0);
+		noStroke();
+		rect(this.x, this.y, this.w, this.h);
+		pop();
+	}
+
+	operate() {
+		this.move();
+		this.display();
+	}
+}
+
 let data;
 let sheet;
 

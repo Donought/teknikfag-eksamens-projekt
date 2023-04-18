@@ -1,32 +1,4 @@
 class Runner {
-  constructor(scale, interval) {
-    this.w = frames[0] * scale;
-    this.h = frames[0] * scale;
-    this.scale = scale;
-    this.interval = interval;
-    this.stamp = millis();
-    this.frame = 0;
-  }
-
-  animate(x, y) {
-    if (this.stamp + this.interval < millis()) {
-      this.stamp = millis();
-      this.frame++;
-    }
-    if (4 < this.frame) {
-      this.frame = 0;
-    }
-
-    this.w = frames[this.frame].width * this.scale;
-    this.h = frames[this.frame].height * this.scale;
-
-    push();
-    imageMode(CORNER);
-    let temp = frames[this.frame];
-    image(temp, x, y, temp.width * this.scale, temp.height * this.scale);
-    pop();
-  }
-
 	constructor() {
 		this.x = 0;
 		this.y = 0;
@@ -88,7 +60,6 @@ class Runner {
 
 		this.display(animations[1]);
 	}
-
 }
 
 let data;
@@ -100,32 +71,7 @@ let animations = [];
 
 let sprite;
 
-let wd = window.innerWidth;
-let hig = window.innerHeight;
-let guess = "";
-
 function preload() {
-
-  data = loadXML("spritesheet/data.xml");
-  sheet = loadImage("spritesheet/sheet.png");
-}
-
-function setup() {
-  createCanvas(window.innerWidth, window.innerHeight);
-
-  let children = data.getChildren("sprite");
-  for (let i = 0; i < children.length; i++) {
-    let x = children[i].getNum("x");
-    let y = children[i].getNum("y");
-    let w = children[i].getNum("w");
-    let h = children[i].getNum("h");
-
-    frames.push(sheet.get(x, y, w, h));
-  }
-
-  sprite = new Runner(8, 100);
-  hurdleQuestion(1, 5, "+", 2);
-
 	sheets.push([
 		loadXML("spritesheet/run/data.xml"),
 		loadImage("spritesheet/run/sheet.png"),
@@ -156,21 +102,10 @@ function setup() {
 	sprite.setPos(width / 4 - sprite.w / 2, (height / 3) * 2 - sprite.h - 5);
 
 	hurdleQuestion(1, 5, "+", 3);
-
 }
 
 let lever = false;
 function draw() {
-
-  background(220);
-
-  push();
-  strokeWeight(10);
-  line(0, (height / 3) * 2, width, (height / 3) * 2);
-  sprite.animate(width / 4 - sprite.w / 2, (height / 3) * 2 - sprite.h - 5);
-  pop();
-  hurdleAsk();
-
 	background(220);
 
 	push();
@@ -225,30 +160,6 @@ print("numbers are:",comp)
 print("ans is:",ans)
 */
 
-
-  // Defines the question as a variable so that it can be displayed.
-  // it does this by creating an array with the variables and the the operator
-  // and then turning it into a string to be displayed
-
-  txt = [];
-  for (let i = 0; i < variables; i++) {
-    txt.push(comp[i]);
-    txt.push(operator);
-  }
-  // Variable to hold the string
-  strr = "";
-  // Removes unnecessary operator
-  txt.splice(txt.length - 1, 1, "=");
-
-  // Places content of txt into string
-  for (let i = 0; i < txt.length; i++) {
-    strr += txt[i];
-  }
-  // Updates txt for clarity
-  txt = strr;
-  //print(txt + ans);
-  return txt, ans;
-
 	// Defines the question as a variable so that it can be displayed.
 	// it does this by creating an array with the variables and the the operator
 	// and then turning it into a string to be displayed
@@ -271,42 +182,4 @@ print("ans is:",ans)
 	txt = strr;
 	print(txt + ans);
 	return txt, ans;
-
-}
-
-function hurdleAsk() {
-  textAlign(CENTER, CENTER);
-  textSize(75);
-  textStyle(BOLD);
-  text(txt + guess, wd / 2, 0 + hig / 15);
-  // console.log(ans)
-}
-function hurdleGuess() {
-  // Adds numbers pressed to a string
-  for (let i = 0; i < 11; i++) {
-    if (key == i) {
-      guess += key;
-    }
-  }
-  // Removes last typed number if backspace is hit
-  if (keyCode == 8) {
-    if (guess.length > 0) {
-      guess = guess.substring(0, guess.length - 1);
-      //console.log("cut")
-    }
-  }
-  // Submits the guess and checks it when enter or space is hit
-  if (keyCode == 13 || keyCode == 32) {
-    if (guess == ans) {
-      hurdleQuestion(1, 5, "+", 2);
-      guess = "";
-    } else {
-      console.log("Wrong answer");
-    }
-  }
-  return guess;
-}
-
-function keyPressed() {
-  hurdleGuess();
 }

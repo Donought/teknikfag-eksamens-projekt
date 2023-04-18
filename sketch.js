@@ -113,8 +113,9 @@ function draw() {
 	line(0, (height / 3) * 2, width, (height / 3) * 2);
 	if (lever) {
 		if (3 < sprite.frame) {
-			if (10 > sprite.hangFrame) {
-				sprite.hang(50, 100, 10);
+			let frames = 10;
+			if (frames > sprite.hangFrame) {
+				sprite.hang(50, 100, frames);
 			} else {
 				sprite.hangFrame = 0;
 				lever = !lever;

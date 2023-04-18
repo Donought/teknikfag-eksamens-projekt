@@ -1,0 +1,7 @@
+<TextureAtlas imagePath="sheet.png" width="160" height="32">
+    <sprite x="0" y="0" w="32" h="32"/>
+    <sprite x="32" y="0" w="32" h="32"/>
+    <sprite x="64" y="0" w="32" h="32"/>
+    <sprite x="96" y="0" w="32" h="32"/>
+    <sprite x="128" y="0" w="32" h="32"/>
+</TextureAtlas>

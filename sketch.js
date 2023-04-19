@@ -103,10 +103,13 @@ let data;
 let sheet;
 
 let sheets = [];
-
 let animations = [];
 
 let sprite;
+
+let wd = window.innerWidth;
+let hig = window.innerHeight;
+let guess = "";
 
 function preload() {
 	sheets.push([
@@ -139,10 +142,10 @@ function setup() {
 	sprite = new Runner();
 	sprite.setScale(8);
 	sprite.setPos(width / 4 - sprite.w / 2, (height / 3) * 2 - sprite.h - 5);
-
-	hurdleQuestion(1, 5, "+", 3);
-
+  
 	obs = new Obstacle(100, 4000);
+  
+	hurdleQuestion(1, 5, "+", 2);
 }
 
 let lever = false;
@@ -168,8 +171,10 @@ function draw() {
 		sprite.animate(animations[0], 100);
 	}
 	pop();
-
+  
 	obs.operate();
+  
+	hurdleAsk();
 }
 
 function mousePressed() {
@@ -215,7 +220,7 @@ print("ans is:",ans)
 	// Variable to hold the string
 	strr = "";
 	// Removes unnecessary operator
-	txt.splice(txt.length + 2, 1, "=");
+	txt.splice(txt.length - 1, 1, "=");
 
 	// Places content of txt into string
 	for (let i = 0; i < txt.length; i++) {
@@ -223,6 +228,44 @@ print("ans is:",ans)
 	}
 	// Updates txt for clarity
 	txt = strr;
-	print(txt + ans);
+	//print(txt + ans);
 	return txt, ans;
 }
+
+function hurdleAsk() {
+	textAlign(CENTER, CENTER);
+	textSize(75);
+	textStyle(BOLD);
+	text(txt + guess, wd / 2, 0 + hig / 15);
+	// console.log(ans)
+}
+function hurdleGuess() {
+	// Adds numbers pressed to a string
+	for (let i = 0; i < 11; i++) {
+		if (key == i) {
+			guess += key;
+		}
+	}
+	// Removes last typed number if backspace is hit
+	if (keyCode == 8) {
+		if (guess.length > 0) {
+			guess = guess.substring(0, guess.length - 1);
+			//console.log("cut")
+		}
+	}
+	// Submits the guess and checks it when enter or space is hit
+	if (keyCode == 13 || keyCode == 32) {
+		if (guess == ans) {
+			hurdleQuestion(1, 5, "+", 2);
+			guess = "";
+		} else {
+			console.log("Wrong answer");
+		}
+	}
+	return guess;
+}
+
+function keyPressed() {
+	hurdleGuess();
+}
+// test

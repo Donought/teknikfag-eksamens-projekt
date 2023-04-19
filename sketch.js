@@ -12,7 +12,7 @@ let wd = window.innerWidth;
 let hig = window.innerHeight;
 let guess = "";
 
-let obs;
+let obs = [];
 
 function preload() {
 	sheets.push([
@@ -44,13 +44,12 @@ function setup() {
 	sprite.setScale(8);
 	sprite.setPos(width / 4 - sprite.w / 2, (height / 3) * 2 - sprite.h - 5);
 
-	obs = new Obstacle(frametime, 4000);
-
 	hurdleQuestion(1, 5, "+", 2);
 
 	//sprite.jump = !sprite.jump;
 }
 
+let stamp;
 let lever = false;
 function draw() {
 	background(220);
@@ -58,25 +57,37 @@ function draw() {
 	push();
 	strokeWeight(10);
 	line(0, (height / 3) * 2, width, (height / 3) * 2);
+	textAlign(RIGHT, TOP);
+	fill(0);
+
+	text("Timer: " + round((stamp - millis()) / 10 ** 3, 2), width, 0);
 	pop();
 
 	sprite.operate();
 
-	obs.operate();
+	obs.forEach((val) => {
+		val.operate();
+		if (5 * val.spd + width / 3 >= val.x && !val.jumped) {
+			sprite.frame = 0;
+			sprite.stamp = millis();
+			sprite.jump = !sprite.jump;
+			val.jumped = !val.jumped;
+		}
+	});
 
-	if (5 * obs.spd + width / 3 >= obs.x && !obs.jumped) {
+	/*if (5 * obs.spd + width / 3 >= obs.x && !obs.jumped) {
 		sprite.frame = 0;
 		sprite.stamp = millis();
 		sprite.jump = !sprite.jump;
 		obs.jumped = !obs.jumped;
-	}
+	}*/
 
 	hurdleAsk();
 }
 
 function mousePressed() {
-	lever = !lever;
-	sprite.frame = 0;
+	obs.push(new Obstacle(frametime, 4000));
+	stamp = millis() + 4000;
 }
 
 function hurdleQuestion(max, min, operator, variables) {

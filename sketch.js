@@ -155,6 +155,7 @@ function hurdleGuess() {
 			guess = "";
 		} else {
 			console.log("Wrong answer");
+			guess = "";
 		}
 	}
 	return guess;

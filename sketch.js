@@ -182,3 +182,51 @@ text("Score:", wd / 12, 0 + hig / 15)
 textAlign(LEFT, CENTER);
 text(score, wd / 6.8, 0 + hig / 15)
 }
+
+function spearQuestion(max, min,difficulty, variables) {
+	comp = [];
+    operators = []
+	for (let i = 1; i < variables + 1; i++) {
+		comp.push(round(random(max, min)));
+      }
+      for (let i = 0; i < variables-1; i++) {
+      temp =round(random(1,2))
+      if(temp == 1){
+      operators.push("+")
+      }
+        if(temp == 2){
+      operators.push("-")
+      }
+  
+}
+  ans = comp[0]
+  
+  for (let i = 0; i < operators.length; i++) {
+    if(operators[i]== "+"){
+    ans += comp[i+1]
+    }
+    if(operators[i]== "-"){
+    ans -= comp[i+1]
+    }
+    if(operators[i]== "*"){
+    ans *= comp[i+1]
+    }   
+}
+	txt = [];
+	for (let i = 0; i < variables; i++) {
+		txt.push(comp[i]);
+		txt.push(operators[i]);
+	}
+	// Variable to hold the string
+	strr = "";
+	// Removes unnecessary operator
+	txt.splice(txt.length - 1, 1, "=");
+	// Places content of txt into string
+	for (let i = 0; i < txt.length; i++) {
+		strr += txt[i];
+	}
+	// Updates txt for clarity
+	txt = strr;
+	print(txt + ans);
+	return txt, ans;
+}

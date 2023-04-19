@@ -11,6 +11,8 @@ let sprite;
 let wd = window.innerWidth;
 let hig = window.innerHeight;
 let guess = "";
+let correct = false
+let score = 0
 
 let obs;
 
@@ -70,6 +72,7 @@ function draw() {
 	}
 
 	hurdleAsk();
+	hurdleScore();
 }
 
 function mousePressed() {
@@ -153,15 +156,29 @@ function hurdleGuess() {
 		if (guess == ans) {
 			hurdleQuestion(1, 5, "+", 2);
 			guess = "";
+			correct = true;
 		} else {
 			console.log("Wrong answer");
 			guess = "";
 		}
+		
 	}
-	return guess;
+	return guess, correct
 }
 
 function keyPressed() {
 	hurdleGuess();
 }
 // test
+
+function hurdleScore() {
+if(correct === true){
+correct = false
+score += 25
+console.log("Score",score)
+return score
+}
+text("Score:", wd / 12, 0 + hig / 15)
+textAlign(LEFT, CENTER);
+text(score, wd / 6.8, 0 + hig / 15)
+}

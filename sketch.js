@@ -62,6 +62,43 @@ class Runner {
 	}
 }
 
+class Obstacle {
+	constructor(interval, time) {
+		this.w = 50;
+		this.h = 100;
+		this.x = (width / 3) * 5 - this.w;
+		this.y = (height / 3) * 2 - this.h;
+
+		this.interval = interval;
+		this.time = time;
+
+		this.spd = (this.interval / this.time) * (this.x - width / 3);
+
+		this.stamp = millis();
+	}
+
+	move() {
+		if (this.stamp + this.interval < millis()) {
+			this.stamp = millis();
+			this.x -= this.spd;
+		}
+	}
+
+	display() {
+		push();
+		rectMode(CORNER);
+		fill(0);
+		noStroke();
+		rect(this.x, this.y, this.w, this.h);
+		pop();
+	}
+
+	operate() {
+		this.move();
+		this.display();
+	}
+}
+
 let data;
 let sheet;
 
@@ -85,6 +122,8 @@ function preload() {
 	]);
 }
 
+let obs;
+
 function setup() {
 	createCanvas(window.innerWidth, window.innerHeight);
 
@@ -103,7 +142,9 @@ function setup() {
 	sprite = new Runner();
 	sprite.setScale(8);
 	sprite.setPos(width / 4 - sprite.w / 2, (height / 3) * 2 - sprite.h - 5);
-
+  
+	obs = new Obstacle(100, 4000);
+  
 	hurdleQuestion(1, 5, "+", 2);
 }
 
@@ -130,6 +171,9 @@ function draw() {
 		sprite.animate(animations[0], 100);
 	}
 	pop();
+  
+	obs.operate();
+  
 	hurdleAsk();
 }
 

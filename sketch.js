@@ -66,19 +66,21 @@ class Obstacle {
 	constructor(interval, time) {
 		this.w = 50;
 		this.h = 100;
-		this.x = width;
+		this.x = (width / 3) * 5 - this.w;
 		this.y = (height / 3) * 2 - this.h;
 
 		this.interval = interval;
 		this.time = time;
 
+		this.spd = (this.interval / this.time) * (this.x - width / 3);
+
 		this.stamp = millis();
 	}
 
 	move() {
-		if (this.stamp + interval < millis()) {
+		if (this.stamp + this.interval < millis()) {
 			this.stamp = millis();
-			this.x -= (interval / time) * (width / 3) * 2 - this.w;
+			this.x -= this.spd;
 		}
 	}
 
@@ -117,6 +119,8 @@ function preload() {
 	]);
 }
 
+let obs;
+
 function setup() {
 	createCanvas(window.innerWidth, window.innerHeight);
 
@@ -137,6 +141,8 @@ function setup() {
 	sprite.setPos(width / 4 - sprite.w / 2, (height / 3) * 2 - sprite.h - 5);
 
 	hurdleQuestion(1, 5, "+", 3);
+
+	obs = new Obstacle(100, 4000);
 }
 
 let lever = false;
@@ -162,6 +168,8 @@ function draw() {
 		sprite.animate(animations[0], 100);
 	}
 	pop();
+
+	obs.operate();
 }
 
 function mousePressed() {

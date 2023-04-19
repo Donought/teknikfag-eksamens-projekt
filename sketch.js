@@ -65,6 +65,8 @@ function draw() {
 	obs.operate();
 
 	if (5 * obs.spd + width / 3 >= obs.x && !obs.jumped) {
+		sprite.frame = 0;
+		sprite.stamp = millis();
 		sprite.jump = !sprite.jump;
 		obs.jumped = !obs.jumped;
 	}

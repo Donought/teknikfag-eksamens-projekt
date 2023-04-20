@@ -19,6 +19,11 @@ let sscore = 0;
 
 let obs = [];
 
+let startTime = 4000;
+let endTime = 1000;
+let totalStreak = 10;
+let streak = 0;
+
 function preload() {
 	sheets.push([
 		loadXML("spritesheet/run/data.xml"),
@@ -73,7 +78,7 @@ function draw() {
 	line(0, (height / 3) * 2, width, (height / 3) * 2);
 	pop();
 
-	obs.forEach((val) => {
+	obs.forEach((val, index) => {
 		val.operate();
 		if (
 			(val.addTime / frametime) * val.spd + width / 4 - val.w / 2 >= val.x &&
@@ -83,17 +88,36 @@ function draw() {
 			sprite.frame = 0;
 			sprite.hangFrame = 0;
 			sprite.stamp = millis();
-			sprite.jump = true;
+			if (correct) {
+				sprite.jump = true;
+				correct = false;
+			} else {
+				sprite.die = true;
+			}
 			val.jumped = true;
 		}
 
-		if (!val.jumped && timerCount < 1) {
+		if (!val.jumped && timerCount < 1 && val.timer > 0) {
 			timerCount++;
 			push();
 			textAlign(RIGHT, TOP);
 			fill(0);
-			text("Timer: " + Math.ceil(val.timer * 10 ** -3, 0), width, 0);
+			text((val.timer * 10 ** -3).toFixed(1), width, 0);
 			pop();
+		}
+
+		if (val.x + val.w < 0) {
+			obs.splice(index, 1);
+			if (streak < totalStreak) {
+				streak++;
+			}
+			obs.push(
+				new Obstacle(
+					frametime,
+					startTime - (startTime - endTime) * (streak / totalStreak),
+					400 + (sprite.totalHangFrames / 2) * 100
+				)
+			);
 		}
 	});
 
@@ -101,7 +125,7 @@ function draw() {
 		push();
 		textAlign(RIGHT, TOP);
 		fill(0);
-		text("Timer: 0", width, 0);
+		text("0.0", width, 0);
 		pop();
 	}
 
@@ -130,7 +154,7 @@ function draw() {
 }
 function mousePressed() {
 	obs.push(
-		new Obstacle(frametime, 4000, 400 + (sprite.totalHangFrames / 2) * 100)
+		new Obstacle(frametime, startTime, 400 + (sprite.totalHangFrames / 2) * 100)
 	);
 }
 function hurdleQuestion(max, min, operator, variables) {
@@ -217,7 +241,7 @@ function hurdleGuess() {
 	return guess, correct;
 }
 function keyPressed() {
-	hurdleGuess()
+	hurdleGuess();
 	//spearGuess();
 }
 function hurdleScore() {

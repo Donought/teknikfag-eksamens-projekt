@@ -17,7 +17,7 @@ let sguess = "";
 let scorrect = false;
 let sscore = 0;
 
-let obs;
+let obs = [];
 
 function preload() {
 	sheets.push([
@@ -54,24 +54,74 @@ function setup() {
 	spearQuestion(1, 5, 1, 3);
 
 	//sprite.jump = !sprite.jump;
+  
+	hurdleQuestion(1, 5, "+", 2);
+
+	//sprite.jump = !sprite.jump;
 }
+
+let stamp;
 let lever = false;
+let timerCount = 0;
 function draw() {
 	background(220);
+
+	sprite.operate();
 
 	push();
 	strokeWeight(10);
 	line(0, (height / 3) * 2, width, (height / 3) * 2);
 	pop();
 
-	sprite.operate();
+	obs.forEach((val) => {
+		val.operate();
+		if (
+			(val.addTime / frametime) * val.spd + width / 4 - val.w / 2 >= val.x &&
+			!val.jumped
+		) {
+			sprite.y = sprite.startY;
+			sprite.frame = 0;
+			sprite.hangFrame = 0;
+			sprite.stamp = millis();
+			sprite.jump = true;
+			val.jumped = true;
+		}
 
-	obs.operate();
+		if (!val.jumped && timerCount < 1) {
+			timerCount++;
+			push();
+			textAlign(RIGHT, TOP);
+			fill(0);
+			text("Timer: " + Math.ceil(val.timer * 10 ** -3, 0), width, 0);
+			pop();
+		}
+	});
 
-	if (5 * obs.spd + width / 3 >= obs.x && !obs.jumped) {
+	if (timerCount < 1) {
+		push();
+		textAlign(RIGHT, TOP);
+		fill(0);
+		text("Timer: 0", width, 0);
+		pop();
+	}
+
+	timerCount = 0;
+
+	/*push();
+	strokeWeight(10);
+	line(0, (height / 3) * 2, width, (height / 3) * 2);
+	textAlign(RIGHT, TOP);
+	fill(0);
+	text("Timer: " + timer, width, 0);
+	timerCount = 0;
+	pop();*/
+
+	/*if (5 * obs.spd + width / 3 >= obs.x && !obs.jumped) {
+		sprite.frame = 0;
+		sprite.stamp = millis();
 		sprite.jump = !sprite.jump;
 		obs.jumped = !obs.jumped;
-	}
+	}*/
 
 	//hurdleAsk();
 	//hurdleScore()
@@ -79,8 +129,9 @@ function draw() {
 	spearGuess();
 }
 function mousePressed() {
-	lever = !lever;
-	sprite.frame = 0;
+	obs.push(
+		new Obstacle(frametime, 4000, 400 + (sprite.totalHangFrames / 2) * 100)
+	);
 }
 function hurdleQuestion(max, min, operator, variables) {
 	comp = [];

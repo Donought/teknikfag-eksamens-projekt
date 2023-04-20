@@ -5,11 +5,12 @@ class Runner {
 		this.addY = 0;
 		this.w = 32;
 		this.h = 32;
-		this.scale = 1;
+		this.scale = 1; // Can be changed
 
 		this.stamp = millis();
 		this.frame = 0;
 		this.hangFrame = 0;
+		this.totalHangFrames = 10; // Can be changed
 		this.jump = false;
 		this.die = false;
 	}
@@ -51,12 +52,12 @@ class Runner {
 		pop();
 	}
 
-	hang(altitude, interval, reps) {
+	hang(altitude, interval) {
 		if (this.stamp < millis() && this.jump) {
 			this.stamp = millis() + interval;
 			this.hangFrame++;
 		}
-		if (reps < this.hangFrame) {
+		if (this.totalHangFrames < this.hangFrame) {
 			this.jump = false;
 			this.hangFrame = 0;
 		}
@@ -64,18 +65,23 @@ class Runner {
 		push();
 		angleMode(RADIANS);
 		this.addY =
-			altitude + altitude * cos(PI + ((2 * PI) / reps) * this.hangFrame);
+			altitude +
+			altitude * cos(PI + ((2 * PI) / this.totalHangFrames) * this.hangFrame);
 		pop();
 
 		this.display(animations[1], 0);
 	}
 
-	fall(altitude, interval, reps) {
-		if (this.stamp < millis() && this.die && this.hangFrame < reps) {
+	fall(altitude, interval) {
+		if (
+			this.stamp < millis() &&
+			this.die &&
+			this.hangFrame < this.totalHangFrames
+		) {
 			this.stamp = millis() + interval;
 			this.hangFrame++;
 		}
-		if (reps < this.hangFrame) {
+		if (this.totalHangFrames < this.hangFrame) {
 			/*this.die = false;
 			this.hangFrame = 0;*/
 		}
@@ -84,23 +90,23 @@ class Runner {
 		angleMode(RADIANS);
 		this.addY =
 			altitude +
-			altitude * cos(PI + ((2 * PI) / reps) * this.hangFrame) -
-			(100 / reps) * this.hangFrame;
+			altitude * cos(PI + ((2 * PI) / this.totalHangFrames) * this.hangFrame) -
+			(100 / this.totalHangFrames) * this.hangFrame;
 		pop();
 
-		this.display(animations[1], (90 / reps) * this.hangFrame);
+		this.display(animations[1], (90 / this.totalHangFrames) * this.hangFrame);
 	}
 
 	operate() {
 		if (this.jump) {
 			if (3 < sprite.frame) {
-				sprite.hang(50, frametime, 10);
+				sprite.hang(50, frametime);
 			} else {
 				sprite.animate(animations[1], frametime);
 			}
 		} else if (this.die) {
 			if (3 < sprite.frame) {
-				sprite.fall(50, frametime, 10);
+				sprite.fall(50, frametime);
 			} else {
 				sprite.animate(animations[1], frametime);
 			}
@@ -115,16 +121,21 @@ class Obstacle {
 		this.w = 50;
 		this.h = 100;
 		this.x = (width / 3) * 5 - this.w;
+		this.startX = this.x;
 		this.y = (height / 3) * 2 - this.h;
 
 		this.interval = interval;
-		this.time = time;
+		this.time = time + 900;
 
-		this.spd = (interval / time) * (this.x - width / 3);
+		this.spd = (interval / time) * this.x;
+		//this.spd = this.x - width / 4;
 
 		this.stamp = millis();
+		this.startStamp = millis();
 
 		this.jumped = false;
+
+		this.timer = time;
 	}
 
 	move() {
@@ -146,5 +157,6 @@ class Obstacle {
 	operate() {
 		this.move();
 		this.display();
+		this.timer = 4000 * ((this.x - width / 4) / (this.startX - width / 4));
 	}
 }

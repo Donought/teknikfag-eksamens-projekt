@@ -51,29 +51,58 @@ function setup() {
 
 let stamp;
 let lever = false;
+let timerCount = 0;
 function draw() {
 	background(220);
+
+	sprite.operate();
 
 	push();
 	strokeWeight(10);
 	line(0, (height / 3) * 2, width, (height / 3) * 2);
-	textAlign(RIGHT, TOP);
-	fill(0);
-
-	text("Timer: " + round((stamp - millis()) / 10 ** 3, 2), width, 0);
 	pop();
-
-	sprite.operate();
 
 	obs.forEach((val) => {
 		val.operate();
-		if (5 * val.spd + width / 3 >= val.x && !val.jumped) {
+		if (
+			(4 + sprite.totalHangFrames / 2) * val.spd + width / 4 - val.w / 2 >=
+				val.x &&
+			!val.jumped
+		) {
 			sprite.frame = 0;
 			sprite.stamp = millis();
-			sprite.die = !sprite.die;
+			sprite.jump = !sprite.jump;
 			val.jumped = !val.jumped;
 		}
+
+		if (!val.jumped && timerCount < 1) {
+			timerCount++;
+			push();
+			textAlign(RIGHT, TOP);
+			fill(0);
+			text("Timer: " + round(val.timer * 10 ** -3, 0), width, 0);
+			pop();
+		}
 	});
+
+	if (timerCount < 1) {
+		push();
+		textAlign(RIGHT, TOP);
+		fill(0);
+		text("Timer: 0", width, 0);
+		pop();
+	}
+
+	timerCount = 0;
+
+	/*push();
+	strokeWeight(10);
+	line(0, (height / 3) * 2, width, (height / 3) * 2);
+	textAlign(RIGHT, TOP);
+	fill(0);
+	text("Timer: " + timer, width, 0);
+	timerCount = 0;
+	pop();*/
 
 	/*if (5 * obs.spd + width / 3 >= obs.x && !obs.jumped) {
 		sprite.frame = 0;

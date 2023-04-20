@@ -93,7 +93,7 @@ class Runner {
 	operate() {
 		if (this.jump) {
 			if (3 < sprite.frame) {
-				sprite.jump(50, frametime, 10);
+				sprite.hang(50, frametime, 10);
 			} else {
 				sprite.animate(animations[1], frametime);
 			}

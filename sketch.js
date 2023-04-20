@@ -11,6 +11,11 @@ let sprite;
 let wd = window.innerWidth;
 let hig = window.innerHeight;
 let guess = "";
+let correct = false;
+let score = 0;
+let sguess = "";
+let scorrect = false;
+let sscore = 0;
 
 let obs = [];
 
@@ -44,7 +49,13 @@ function setup() {
 	sprite.setScale(8);
 	sprite.setPos(width / 4 - sprite.w / 2, (height / 3) * 2 - sprite.h - 5);
 
-	hurdleQuestion(1, 5, "+", 2);
+	//obs = new Obstacle(frametime, 4000);
+
+	spearQuestion(1, 5, 1, 3);
+
+	//sprite.jump = !sprite.jump;
+
+	//hurdleQuestion(1, 5, "+", 2);
 
 	//sprite.jump = !sprite.jump;
 }
@@ -112,15 +123,16 @@ function draw() {
 		obs.jumped = !obs.jumped;
 	}*/
 
-	hurdleAsk();
-}
+	//hurdleAsk();
+	//hurdleScore()
 
+	spearGuess();
+}
 function mousePressed() {
 	obs.push(
 		new Obstacle(frametime, 4000, 400 + (sprite.totalHangFrames / 2) * 100)
 	);
 }
-
 function hurdleQuestion(max, min, operator, variables) {
 	comp = [];
 	for (let i = 1; i < variables + 1; i++) {
@@ -170,7 +182,6 @@ print("ans is:",ans)
 	//print(txt + ans);
 	return txt, ans;
 }
-
 function hurdleAsk() {
 	textAlign(CENTER, CENTER);
 	textSize(75);
@@ -197,15 +208,114 @@ function hurdleGuess() {
 		if (guess == ans) {
 			hurdleQuestion(1, 5, "+", 2);
 			guess = "";
+			correct = true;
 		} else {
 			console.log("Wrong answer");
 			guess = "";
 		}
 	}
-	return guess;
+	return guess, correct;
 }
 
 function keyPressed() {
-	hurdleGuess();
+	//hurdleGuess()
+	spearGuess();
 }
-// test
+function hurdleScore() {
+	if (correct === true) {
+		correct = false;
+		score += 25;
+		console.log("Score", score);
+		return score;
+	}
+	text("Score:", wd / 12, 0 + hig / 15);
+	textAlign(LEFT, CENTER);
+	text(score, wd / 6.8, 0 + hig / 15);
+}
+function spearQuestion(max, min, difficulty, variables) {
+	comp = [];
+	operators = [];
+	for (let i = 1; i < variables + 1; i++) {
+		comp.push(round(random(max, min)));
+	}
+	for (let i = 0; i < variables - 1; i++) {
+		temp = round(random(1, 2));
+		if (temp == 1) {
+			operators.push("+");
+		}
+		if (temp == 2) {
+			operators.push("-");
+		}
+	}
+	ans = comp[0];
+
+	for (let i = 0; i < operators.length; i++) {
+		if (operators[i] == "+") {
+			ans += comp[i + 1];
+		}
+		if (operators[i] == "-") {
+			ans -= comp[i + 1];
+		}
+		if (operators[i] == "*") {
+			ans *= comp[i + 1];
+		}
+	}
+	txt = [];
+	for (let i = 0; i < variables; i++) {
+		txt.push(comp[i]);
+		txt.push(operators[i]);
+	}
+	// Variable to hold the string
+	strr = "";
+	// Removes unnecessary operator
+	txt.splice(txt.length - 1, 1, "=");
+	// Places content of txt into string
+	for (let i = 0; i < txt.length; i++) {
+		strr += txt[i];
+	}
+	// Updates txt for clarity
+	txt = strr;
+	print(txt + ans);
+	return txt, ans;
+}
+function spearGuess() {
+	// This is a copy of the hurdle guess function edited to work for spearGuess()
+
+	// Adds numbers pressed to a string
+	for (let i = 0; i < 11; i++) {
+		if (key == i) {
+			sguess += key;
+		}
+	}
+	// Removes last typed number if backspace is hit
+	if (keyCode == 8) {
+		if (sguess.length > 0) {
+			sguess = sguess.substring(0, sguess.length - 1);
+			//console.log("cut")
+		}
+	}
+	// Submits the guess and checks it when enter or space is hit
+	if (keyCode == 13 || keyCode == 32) {
+		if (sguess == ans) {
+			sQuestion(1, 5, 1, 3);
+			sguess = "";
+			scorrect = true;
+		} else {
+			console.log("Wrong answer");
+			sguess = "";
+		}
+	}
+	// Score handling
+	if (scorrect === true) {
+		scorrect = false;
+		sscore += 1;
+		console.log("Score", sscore);
+
+		return sscore;
+	}
+	textAlign(CENTER, CENTER);
+	textSize(75);
+	textStyle(BOLD);
+	text(txt + guess, wd / 2, 0 + hig / 15);
+	return sguess, scorrect;
+}

@@ -36,17 +36,17 @@ class Runner {
 		this.display(frames);
 	}
 
-	display(frames) {
+	display(frames, rotation) {
 		push();
-		imageMode(CORNER);
 		let temp = frames[this.frame];
-		image(
-			temp,
-			this.x,
-			this.y - this.addY,
-			temp.width * this.scale,
-			temp.height * this.scale
+		translate(
+			this.x + (temp.width * this.scale) / 2,
+			this.y - this.addY + (temp.height * this.scale) / 2
 		);
+		angleMode(DEGREES);
+		rotate(rotation);
+		imageMode(CENTER);
+		image(temp, 0, 0, temp.width * this.scale, temp.height * this.scale);
 		pop();
 	}
 
@@ -60,16 +60,40 @@ class Runner {
 			this.hangFrame = 0;
 		}
 
+		push();
+		angleMode(RADIANS);
 		this.addY =
 			altitude + altitude * cos(PI + ((2 * PI) / reps) * this.hangFrame);
+		pop();
 
-		this.display(animations[1]);
+		this.display(animations[1], 0);
+	}
+
+	fall(altitude, interval, reps) {
+		if (this.stamp < millis() && this.jump) {
+			this.stamp = millis() + interval;
+			this.hangFrame++;
+		}
+		if (reps < this.hangFrame) {
+			this.jump = false;
+			this.hangFrame = 0;
+		}
+
+		push();
+		angleMode(RADIANS);
+		this.addY =
+			altitude +
+			altitude * cos(PI + ((2 * PI) / reps) * this.hangFrame) -
+			(100 / reps) * this.hangFrame;
+		pop();
+
+		this.display(animations[1], (90 / reps) * this.hangFrame);
 	}
 
 	operate() {
 		if (this.jump) {
 			if (3 < sprite.frame) {
-				sprite.hang(50, frametime, 10);
+				sprite.jump(50, frametime, 10);
 			} else {
 				sprite.animate(animations[1], frametime);
 			}

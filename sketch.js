@@ -49,13 +49,13 @@ function setup() {
 	sprite.setScale(8);
 	sprite.setPos(width / 4 - sprite.w / 2, (height / 3) * 2 - sprite.h - 5);
 
-	obs = new Obstacle(frametime, 4000);
+	//obs = new Obstacle(frametime, 4000);
 
 	spearQuestion(1, 5, 1, 3);
 
 	//sprite.jump = !sprite.jump;
-  
-	hurdleQuestion(1, 5, "+", 2);
+
+	//hurdleQuestion(1, 5, "+", 2);
 
 	//sprite.jump = !sprite.jump;
 }

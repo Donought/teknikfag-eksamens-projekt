@@ -11,6 +11,7 @@ class Runner {
 		this.frame = 0;
 		this.hangFrame = 0;
 		this.jump = false;
+		this.die = false;
 	}
 
 	setScale(scale) {
@@ -70,13 +71,13 @@ class Runner {
 	}
 
 	fall(altitude, interval, reps) {
-		if (this.stamp < millis() && this.jump) {
+		if (this.stamp < millis() && this.die && this.hangFrame < reps) {
 			this.stamp = millis() + interval;
 			this.hangFrame++;
 		}
 		if (reps < this.hangFrame) {
-			this.jump = false;
-			this.hangFrame = 0;
+			/*this.die = false;
+			this.hangFrame = 0;*/
 		}
 
 		push();
@@ -94,6 +95,12 @@ class Runner {
 		if (this.jump) {
 			if (3 < sprite.frame) {
 				sprite.hang(50, frametime, 10);
+			} else {
+				sprite.animate(animations[1], frametime);
+			}
+		} else if (this.die) {
+			if (3 < sprite.frame) {
+				sprite.fall(50, frametime, 10);
 			} else {
 				sprite.animate(animations[1], frametime);
 			}

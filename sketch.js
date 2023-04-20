@@ -70,7 +70,7 @@ function draw() {
 		if (5 * val.spd + width / 3 >= val.x && !val.jumped) {
 			sprite.frame = 0;
 			sprite.stamp = millis();
-			sprite.jump = !sprite.jump;
+			sprite.die = !sprite.die;
 			val.jumped = !val.jumped;
 		}
 	});

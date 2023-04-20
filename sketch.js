@@ -51,11 +51,11 @@ function setup() {
 
 	//obs = new Obstacle(frametime, 4000);
 
-	spearQuestion(1, 5, 1, 3);
+	//spearQuestion(1, 5, 1, 3);
 
 	//sprite.jump = !sprite.jump;
 
-	//hurdleQuestion(1, 5, "+", 2);
+	hurdleQuestion(1, 5, "+", 2);
 
 	//sprite.jump = !sprite.jump;
 }
@@ -216,10 +216,9 @@ function hurdleGuess() {
 	}
 	return guess, correct;
 }
-
 function keyPressed() {
-	//hurdleGuess()
-	spearGuess();
+	hurdleGuess()
+	//spearGuess();
 }
 function hurdleScore() {
 	if (correct === true) {

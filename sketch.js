@@ -32,7 +32,7 @@ let gamemode = 0;
 let min = 1;
 let max = 5;
 let operator = "+";
-let variableCount = 3;
+let variableCount = 2;
 
 function preload() {
 	sheets.push([
@@ -48,7 +48,6 @@ function preload() {
 		loadImage("spritesheet/throw/sheet.png"),
 	]);
 }
-
 function setup() {
 	createCanvas(window.innerWidth, window.innerHeight);
 
@@ -98,7 +97,6 @@ function setup() {
 
 	//sprite.jump = !sprite.jump;
 }
-
 let stamp;
 let lever = false;
 let timerCount = 0;
@@ -181,6 +179,8 @@ function draw() {
 
 		hurdleScore();
 	} else if (gamemode == 2) {
+		spearQuestion(1,5,1,2)
+		spearGuess()
 	}
 
 	/*push();
@@ -234,6 +234,7 @@ function keyPressed() {
 }
 
 function hurdleQuestion(max, min, operator, variables) {
+	// Comp = component
 	comp = [];
 	for (let i = 1; i < variables + 1; i++) {
 		comp.push(round(random(max, min)));
@@ -332,9 +333,6 @@ function hurdleScore() {
 	textSize(75);
 	textStyle(BOLD);
 	text("Score:" + Math.floor(score), 0, 0);
-	//text("Score:" + score, wd / 12, 0 + hig / 15);
-	/*textAlign(LEFT, CENTER);
-	text(score, wd / 6.8, 0 + hig / 15);*/
 	pop();
 }
 

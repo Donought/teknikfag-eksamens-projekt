@@ -219,6 +219,17 @@ function mousePressed() {
 			streak = 0;
 			score = 0;
 		}
+	} else if (gamemode == 2) {
+	}
+}
+
+function keyPressed() {
+	if (gamemode == 1) {
+		if (!correct) {
+			hurdleGuess();
+		}
+		//spearGuess();
+	} else if (gamemode == 2) {
 	}
 }
 
@@ -307,13 +318,6 @@ function hurdleGuess() {
 		}
 	}
 	return guess, correct;
-}
-
-function keyPressed() {
-	if (!correct) {
-		hurdleGuess();
-	}
-	//spearGuess();
 }
 
 function hurdleScore() {

@@ -60,7 +60,7 @@ function setup() {
 
 	//sprite.jump = !sprite.jump;
 
-	hurdleQuestion(1, 5, "+", 2);
+	txt = "Klik for start";
 
 	//sprite.jump = !sprite.jump;
 }
@@ -91,9 +91,22 @@ function draw() {
 			if (correct) {
 				sprite.jump = true;
 				correct = false;
+				hurdleQuestion(1, 5, "+", 2);
+				if (streak < totalStreak) {
+					streak++;
+				}
+				obs.push(
+					new Obstacle(
+						frametime,
+						startTime - (startTime - endTime) * (streak / totalStreak),
+						400 + (sprite.totalHangFrames / 2) * 100
+					)
+				);
 			} else {
 				sprite.die = true;
+				txt = "Game over";
 			}
+			guess = "";
 			val.jumped = true;
 		}
 
@@ -101,6 +114,8 @@ function draw() {
 			timerCount++;
 			push();
 			textAlign(RIGHT, TOP);
+			textSize(75);
+			textStyle(BOLD);
 			fill(0);
 			text((val.timer * 10 ** -3).toFixed(1), width, 0);
 			pop();
@@ -108,22 +123,14 @@ function draw() {
 
 		if (val.x + val.w < 0) {
 			obs.splice(index, 1);
-			if (streak < totalStreak) {
-				streak++;
-			}
-			obs.push(
-				new Obstacle(
-					frametime,
-					startTime - (startTime - endTime) * (streak / totalStreak),
-					400 + (sprite.totalHangFrames / 2) * 100
-				)
-			);
 		}
 	});
 
 	if (timerCount < 1) {
 		push();
 		textAlign(RIGHT, TOP);
+		textSize(75);
+		textStyle(BOLD);
 		fill(0);
 		text("0.0", width, 0);
 		pop();
@@ -147,15 +154,25 @@ function draw() {
 		obs.jumped = !obs.jumped;
 	}*/
 
-	//hurdleAsk();
+	hurdleAsk();
 	//hurdleScore()
 
-	spearGuess();
+	//spearGuess();
 }
-function mousePressed() {
-	obs.push(
-		new Obstacle(frametime, startTime, 400 + (sprite.totalHangFrames / 2) * 100)
-	);
+function mouseClicked() {
+	if (obs.length < 1) {
+		obs.push(
+			new Obstacle(
+				frametime,
+				startTime,
+				400 + (sprite.totalHangFrames / 2) * 100
+			)
+		);
+		hurdleQuestion(1, 5, "+", 2);
+		sprite.die = false;
+		sprite.addY = 0;
+		streak = 0;
+	}
 }
 function hurdleQuestion(max, min, operator, variables) {
 	comp = [];
@@ -176,12 +193,6 @@ function hurdleQuestion(max, min, operator, variables) {
 			ans *= comp[i];
 		}
 	}
-	// Debugging
-	/*
-print("how many numbers:",comp.length)
-print("numbers are:",comp)
-print("ans is:",ans)
-*/
 
 	// Defines the question as a variable so that it can be displayed.
 	// it does this by creating an array with the variables and the the operator
@@ -207,10 +218,17 @@ print("ans is:",ans)
 	return txt, ans;
 }
 function hurdleAsk() {
+	push();
 	textAlign(CENTER, CENTER);
 	textSize(75);
 	textStyle(BOLD);
+	if (correct) {
+		fill(0, 150, 0);
+	} else {
+		fill(0);
+	}
 	text(txt + guess, wd / 2, 0 + hig / 15);
+	pop();
 	// console.log(ans)
 }
 function hurdleGuess() {
@@ -230,8 +248,8 @@ function hurdleGuess() {
 	// Submits the guess and checks it when enter or space is hit
 	if (keyCode == 13 || keyCode == 32) {
 		if (guess == ans) {
-			hurdleQuestion(1, 5, "+", 2);
-			guess = "";
+			//hurdleQuestion(1, 5, "+", 2);
+			//guess = "";
 			correct = true;
 		} else {
 			console.log("Wrong answer");
@@ -241,7 +259,9 @@ function hurdleGuess() {
 	return guess, correct;
 }
 function keyPressed() {
-	hurdleGuess();
+	if (!correct) {
+		hurdleGuess();
+	}
 	//spearGuess();
 }
 function hurdleScore() {

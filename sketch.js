@@ -6,7 +6,11 @@ let sheet;
 let sheets = [];
 let animations = [];
 
-let sprite;
+let runner;
+let spearman;
+
+let obs = [];
+let spear;
 
 let wd = window.innerWidth;
 let hig = window.innerHeight;
@@ -16,8 +20,6 @@ let score = 0;
 let sguess = "";
 let scorrect = false;
 let sscore = 0;
-
-let obs = [];
 
 let startTime = 6000;
 let endTime = 2000;
@@ -33,6 +35,13 @@ let min = 1;
 let max = 5;
 let operator = "+";
 let variableCount = 3;
+
+let spearStart = false;
+let cdStamp = 0;
+let seconds = 0;
+let countdowntimer = 10; // Can be changed
+let milliseconds = 0;
+let timerS = 0;
 
 function preload() {
 	sheets.push([
@@ -84,9 +93,21 @@ function setup() {
 		gamemode = 2;
 	});
 
-	sprite = new Runner();
-	sprite.setScale(8);
-	sprite.setPos(width / 4 - sprite.w / 2, (height / 3) * 2 - sprite.h - 5);
+	runner = new Runner();
+	runner.setScale(8);
+	runner.setPos(width / 4 - runner.w / 2, (height / 3) * 2 - runner.h - 5);
+
+	spearman = new Spearman();
+	spearman.setScale(8);
+	spearman.setPos(
+		(width / 4) * 1 - spearman.w / 2,
+		(height / 6) * 5 - spearman.h - 5
+	);
+
+	spear = new Spear(
+		spearman.x + 10 * spearman.scale,
+		spearman.y + 16 * spearman.scale
+	);
 
 	//obs = new Obstacle(frametime, 4000);
 
@@ -110,7 +131,7 @@ function draw() {
 		spearBtn.hide();
 	}
 	if (gamemode == 1) {
-		sprite.operate();
+		runner.operate();
 
 		push();
 		strokeWeight(10);
@@ -123,12 +144,12 @@ function draw() {
 				(val.addTime / frametime) * val.spd + width / 4 - val.w / 2 >= val.x &&
 				!val.jumped
 			) {
-				sprite.y = sprite.startY;
-				sprite.frame = 0;
-				sprite.hangFrame = 0;
-				sprite.stamp = millis();
+				runner.y = runner.startY;
+				runner.frame = 0;
+				runner.hangFrame = 0;
+				runner.stamp = millis();
 				if (correct) {
-					sprite.jump = true;
+					runner.jump = true;
 					correct = false;
 					hurdleQuestion(min, max, operator, variableCount);
 					if (streak < totalStreak) {
@@ -138,11 +159,11 @@ function draw() {
 						new Obstacle(
 							frametime,
 							startTime - (startTime - endTime) * (streak / totalStreak),
-							400 + (sprite.totalHangFrames / 2) * 100
+							400 + (runner.totalHangFrames / 2) * 100
 						)
 					);
 				} else {
-					sprite.die = true;
+					runner.die = true;
 					txt = "Game over";
 				}
 				guess = "";
@@ -181,6 +202,30 @@ function draw() {
 
 		hurdleScore();
 	} else if (gamemode == 2) {
+		milliseconds = millis() - cdStamp;
+		seconds = Math.floor(milliseconds / 1000);
+		if (spearStart) {
+			timerS = countdowntimer - seconds;
+			if (timerS < 1) {
+				timerS = 0;
+				spear.fly(100, frametime);
+				spearman.move(frametime);
+			}
+		}
+
+		push();
+		textAlign(CENTER, CENTER);
+		textSize(75);
+		text(timerS, width / 2, 0, width / 2, height / 4);
+		pop();
+
+		spearman.display();
+		spear.display();
+
+		push();
+		strokeWeight(10);
+		line(0, (height / 6) * 5, width / 2, (height / 6) * 5);
+		pop();
 	}
 
 	/*push();
@@ -210,16 +255,18 @@ function mousePressed() {
 				new Obstacle(
 					frametime,
 					startTime,
-					400 + (sprite.totalHangFrames / 2) * 100
+					400 + (runner.totalHangFrames / 2) * 100
 				)
 			);
 			hurdleQuestion(min, max, operator, variableCount);
-			sprite.die = false;
-			sprite.addY = 0;
+			runner.die = false;
+			runner.addY = 0;
 			streak = 0;
 			score = 0;
 		}
 	} else if (gamemode == 2) {
+		spearStart = true;
+		cdStamp = millis();
 	}
 }
 

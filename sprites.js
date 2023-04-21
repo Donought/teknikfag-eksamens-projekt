@@ -41,8 +41,8 @@ class Runner {
 	}
 
 	display(frames, rotation) {
-		push();
 		let temp = frames[this.frame];
+		push();
 		translate(
 			this.x + (temp.width * this.scale) / 2,
 			this.y - this.addY + (temp.height * this.scale) / 2
@@ -101,19 +101,19 @@ class Runner {
 
 	operate() {
 		if (this.jump) {
-			if (3 < sprite.frame) {
-				sprite.hang(50, frametime);
+			if (3 < runner.frame) {
+				runner.hang(50, frametime);
 			} else {
-				sprite.animate(animations[1], frametime);
+				runner.animate(animations[1], frametime);
 			}
 		} else if (this.die) {
-			if (3 < sprite.frame) {
-				sprite.fall(50, frametime);
+			if (3 < runner.frame) {
+				runner.fall(50, frametime);
 			} else {
-				sprite.animate(animations[1], frametime);
+				runner.animate(animations[1], frametime);
 			}
 		} else {
-			sprite.animate(animations[0], frametime);
+			runner.animate(animations[0], frametime);
 		}
 	}
 }
@@ -163,5 +163,94 @@ class Obstacle {
 		this.timer =
 			this.time * ((this.x - width / 4) / (this.startX - width / 4)) -
 			this.addTime;
+	}
+}
+
+class Spearman {
+	constructor() {
+		this.x = 0;
+		this.y = 0;
+		this.w = 32;
+		this.h = 32;
+		this.scale = 1;
+
+		this.stamp = 0;
+		this.spd = 100;
+	}
+
+	setScale(scale) {
+		this.w *= scale;
+		this.h *= scale;
+		this.scale = scale;
+	}
+
+	setPos(x, y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	display() {
+		let temp = animations[2][0];
+		push();
+		imageMode(CORNER);
+		image(temp, this.x, this.y, this.w, this.h);
+		pop();
+	}
+
+	move(interval) {
+		if (this.stamp < millis()) {
+			this.stamp = millis() + interval;
+			this.x -= this.spd;
+		}
+	}
+}
+
+class Spear {
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+		this.addY = 0;
+		this.w = 300;
+		this.h = 10;
+		this.rotation = -20;
+
+		this.stamp = 0;
+		this.hangFrame = 0;
+		this.totalHangFrames = 20; // Can be changed
+	}
+
+	display() {
+		push();
+		translate(this.x, this.y - this.addY);
+		angleMode(DEGREES);
+		rotate(this.rotation);
+		rectMode(CENTER);
+		noStroke();
+		fill(200, 0, 0);
+		rect(0, 0, this.w, this.h);
+		pop();
+	}
+
+	fly(altitude, interval) {
+		if (this.stamp < millis() && this.hangFrame < this.totalHangFrames) {
+			this.stamp = millis() + interval;
+			this.hangFrame++;
+			console.log("bruh");
+		}
+		if (this.totalHangFrames < this.hangFrame) {
+			/*this.die = false;
+			this.hangFrame = 0;*/
+		}
+
+		push();
+		angleMode(RADIANS);
+		this.addY =
+			altitude +
+			altitude * cos(PI + ((2 * PI) / this.totalHangFrames) * this.hangFrame) -
+			(90 / this.totalHangFrames) * this.hangFrame;
+		pop();
+
+		this.rotation = -20 + (45 / this.totalHangFrames) * this.hangFrame;
+		this.display();
 	}
 }

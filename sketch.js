@@ -29,6 +29,11 @@ let spearBtn;
 
 let gamemode = 0;
 
+let min = 1;
+let max = 5;
+let operator = "+";
+let variableCount = 3;
+
 function preload() {
 	sheets.push([
 		loadXML("spritesheet/run/data.xml"),
@@ -125,7 +130,7 @@ function draw() {
 				if (correct) {
 					sprite.jump = true;
 					correct = false;
-					hurdleQuestion(1, 5, "+", 2);
+					hurdleQuestion(min, max, operator, variableCount);
 					if (streak < totalStreak) {
 						streak++;
 					}
@@ -208,7 +213,7 @@ function mousePressed() {
 					400 + (sprite.totalHangFrames / 2) * 100
 				)
 			);
-			hurdleQuestion(1, 5, "+", 2);
+			hurdleQuestion(min, max, operator, variableCount);
 			sprite.die = false;
 			sprite.addY = 0;
 			streak = 0;

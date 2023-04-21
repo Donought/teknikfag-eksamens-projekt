@@ -155,7 +155,7 @@ function draw() {
 	}*/
 
 	hurdleAsk();
-	//hurdleScore()
+	hurdleScore()
 
 	//spearGuess();
 }
@@ -265,15 +265,21 @@ function keyPressed() {
 	//spearGuess();
 }
 function hurdleScore() {
+	push();
+	textAlign(CENTER, CENTER);
+	textSize(75);
+	textStyle(BOLD);
 	if (correct === true) {
-		correct = false;
-		score += 25;
+		score += 1;
 		console.log("Score", score);
-		return score;
+		round(score)
+		
 	}
 	text("Score:", wd / 12, 0 + hig / 15);
 	textAlign(LEFT, CENTER);
-	text(score, wd / 6.8, 0 + hig / 15);
+	text(floor(score), wd / 6.8, 0 + hig / 15);
+	pop()
+	return score;
 }
 function spearQuestion(max, min, difficulty, variables) {
 	comp = [];

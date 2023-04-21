@@ -217,6 +217,7 @@ function mousePressed() {
 			sprite.die = false;
 			sprite.addY = 0;
 			streak = 0;
+			score = 0;
 		}
 	}
 }

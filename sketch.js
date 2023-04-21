@@ -19,10 +19,15 @@ let sscore = 0;
 
 let obs = [];
 
-let startTime = 4000;
-let endTime = 1000;
+let startTime = 6000;
+let endTime = 2000;
 let totalStreak = 10;
 let streak = 0;
+
+let hurdleBtn;
+let spearBtn;
+
+let gamemode = 0;
 
 function preload() {
 	sheets.push([
@@ -32,6 +37,10 @@ function preload() {
 	sheets.push([
 		loadXML("spritesheet/jump/data.xml"),
 		loadImage("spritesheet/jump/sheet.png"),
+	]);
+	sheets.push([
+		loadXML("spritesheet/throw/data.xml"),
+		loadImage("spritesheet/throw/sheet.png"),
 	]);
 }
 
@@ -48,6 +57,26 @@ function setup() {
 			let h = children[i].getNum("h");
 			animations[index].push(sheet[1].get(x, y, w, h));
 		}
+	});
+
+	hurdleBtn = createButton("Hækkeløb");
+	hurdleBtn.style("font-size", "75px");
+	hurdleBtn.position(
+		width / 2 - hurdleBtn.size().width / 2,
+		(height / 3) * 1 - hurdleBtn.size().height / 2
+	);
+	hurdleBtn.mouseReleased(() => {
+		gamemode = 1;
+	});
+
+	spearBtn = createButton("Spydkast");
+	spearBtn.style("font-size", "75px");
+	spearBtn.position(
+		width / 2 - spearBtn.size().width / 2,
+		(height / 3) * 2 - spearBtn.size().height / 2
+	);
+	spearBtn.mouseReleased(() => {
+		gamemode = 2;
 	});
 
 	sprite = new Runner();
@@ -71,72 +100,83 @@ let timerCount = 0;
 function draw() {
 	background(220);
 
-	sprite.operate();
+	if (0 < gamemode) {
+		hurdleBtn.hide();
+		spearBtn.hide();
+	}
+	if (gamemode == 1) {
+		sprite.operate();
 
-	push();
-	strokeWeight(10);
-	line(0, (height / 3) * 2, width, (height / 3) * 2);
-	pop();
+		push();
+		strokeWeight(10);
+		line(0, (height / 3) * 2, width, (height / 3) * 2);
+		pop();
 
-	obs.forEach((val, index) => {
-		val.operate();
-		if (
-			(val.addTime / frametime) * val.spd + width / 4 - val.w / 2 >= val.x &&
-			!val.jumped
-		) {
-			sprite.y = sprite.startY;
-			sprite.frame = 0;
-			sprite.hangFrame = 0;
-			sprite.stamp = millis();
-			if (correct) {
-				sprite.jump = true;
-				correct = false;
-				hurdleQuestion(1, 5, "+", 2);
-				if (streak < totalStreak) {
-					streak++;
+		obs.forEach((val, index) => {
+			val.operate();
+			if (
+				(val.addTime / frametime) * val.spd + width / 4 - val.w / 2 >= val.x &&
+				!val.jumped
+			) {
+				sprite.y = sprite.startY;
+				sprite.frame = 0;
+				sprite.hangFrame = 0;
+				sprite.stamp = millis();
+				if (correct) {
+					sprite.jump = true;
+					correct = false;
+					hurdleQuestion(1, 5, "+", 2);
+					if (streak < totalStreak) {
+						streak++;
+					}
+					obs.push(
+						new Obstacle(
+							frametime,
+							startTime - (startTime - endTime) * (streak / totalStreak),
+							400 + (sprite.totalHangFrames / 2) * 100
+						)
+					);
+				} else {
+					sprite.die = true;
+					txt = "Game over";
 				}
-				obs.push(
-					new Obstacle(
-						frametime,
-						startTime - (startTime - endTime) * (streak / totalStreak),
-						400 + (sprite.totalHangFrames / 2) * 100
-					)
-				);
-			} else {
-				sprite.die = true;
-				txt = "Game over";
+				guess = "";
+				val.jumped = true;
 			}
-			guess = "";
-			val.jumped = true;
-		}
 
-		if (!val.jumped && timerCount < 1 && val.timer > 0) {
-			timerCount++;
+			if (!val.jumped && timerCount < 1 && val.timer > 0) {
+				timerCount++;
+				push();
+				textAlign(RIGHT, TOP);
+				textSize(75);
+				textStyle(BOLD);
+				fill(0);
+				text((val.timer * 10 ** -3).toFixed(1), width, 0);
+				pop();
+			}
+
+			if (val.x + val.w < 0) {
+				obs.splice(index, 1);
+			}
+		});
+
+		if (timerCount < 1) {
 			push();
 			textAlign(RIGHT, TOP);
 			textSize(75);
 			textStyle(BOLD);
 			fill(0);
-			text((val.timer * 10 ** -3).toFixed(1), width, 0);
+			text("0.0", width, 0);
 			pop();
 		}
 
-		if (val.x + val.w < 0) {
-			obs.splice(index, 1);
-		}
-	});
+		timerCount = 0;
 
-	if (timerCount < 1) {
-		push();
-		textAlign(RIGHT, TOP);
-		textSize(75);
-		textStyle(BOLD);
-		fill(0);
-		text("0.0", width, 0);
-		pop();
+		hurdleAsk();
+
+		hurdleScore();
+	} else if (gamemode == 2) {
 	}
-
-	timerCount = 0;
 
 	/*push();
 	strokeWeight(10);
@@ -154,26 +194,28 @@ function draw() {
 		obs.jumped = !obs.jumped;
 	}*/
 
-	hurdleAsk();
 	//hurdleScore()
 
 	//spearGuess();
 }
-function mouseClicked() {
-	if (obs.length < 1) {
-		obs.push(
-			new Obstacle(
-				frametime,
-				startTime,
-				400 + (sprite.totalHangFrames / 2) * 100
-			)
-		);
-		hurdleQuestion(1, 5, "+", 2);
-		sprite.die = false;
-		sprite.addY = 0;
-		streak = 0;
+function mousePressed() {
+	if (gamemode == 1) {
+		if (obs.length < 1) {
+			obs.push(
+				new Obstacle(
+					frametime,
+					startTime,
+					400 + (sprite.totalHangFrames / 2) * 100
+				)
+			);
+			hurdleQuestion(1, 5, "+", 2);
+			sprite.die = false;
+			sprite.addY = 0;
+			streak = 0;
+		}
 	}
 }
+
 function hurdleQuestion(max, min, operator, variables) {
 	comp = [];
 	for (let i = 1; i < variables + 1; i++) {
@@ -217,6 +259,7 @@ function hurdleQuestion(max, min, operator, variables) {
 	//print(txt + ans);
 	return txt, ans;
 }
+
 function hurdleAsk() {
 	push();
 	textAlign(CENTER, CENTER);
@@ -231,6 +274,7 @@ function hurdleAsk() {
 	pop();
 	// console.log(ans)
 }
+
 function hurdleGuess() {
 	// Adds numbers pressed to a string
 	for (let i = 0; i < 11; i++) {
@@ -258,23 +302,32 @@ function hurdleGuess() {
 	}
 	return guess, correct;
 }
+
 function keyPressed() {
 	if (!correct) {
 		hurdleGuess();
 	}
 	//spearGuess();
 }
+
 function hurdleScore() {
 	if (correct === true) {
-		correct = false;
-		score += 25;
+		//correct = false;
+		score += 0.5;
 		console.log("Score", score);
-		return score;
+		//return score;
 	}
-	text("Score:", wd / 12, 0 + hig / 15);
-	textAlign(LEFT, CENTER);
-	text(score, wd / 6.8, 0 + hig / 15);
+	push();
+	textAlign(LEFT, TOP);
+	textSize(75);
+	textStyle(BOLD);
+	text("Score:" + Math.floor(score), 0, 0);
+	//text("Score:" + score, wd / 12, 0 + hig / 15);
+	/*textAlign(LEFT, CENTER);
+	text(score, wd / 6.8, 0 + hig / 15);*/
+	pop();
 }
+
 function spearQuestion(max, min, difficulty, variables) {
 	comp = [];
 	operators = [];
@@ -321,6 +374,7 @@ function spearQuestion(max, min, difficulty, variables) {
 	print(txt + ans);
 	return txt, ans;
 }
+
 function spearGuess() {
 	// This is a copy of the hurdle guess function edited to work for spearGuess()
 

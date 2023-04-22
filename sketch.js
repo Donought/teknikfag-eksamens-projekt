@@ -224,7 +224,10 @@ function draw() {
 
 		push();
 		strokeWeight(10);
-		line(0, (height / 6) * 5, width / 2, (height / 6) * 5);
+		line(0, (height / 6) * 5, width / 2 - 3, (height / 6) * 5);
+		strokeWeight(4);
+		line(width / 2, 0, width / 2, height);
+		line(0, height / 4, width, height / 4);
 		pop();
 	}
 
@@ -264,9 +267,13 @@ function mousePressed() {
 			streak = 0;
 			score = 0;
 		}
-	} else if (gamemode == 2) {
+	} else if (gamemode == 2 && timerS == 0) {
 		spearStart = true;
 		cdStamp = millis();
+		spearman.x = spearman.startX;
+		spear.addY = 0;
+		spear.rotation = spear.startRotation;
+		spear.hangFrame = 0;
 	}
 }
 

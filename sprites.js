@@ -168,6 +168,7 @@ class Obstacle {
 
 class Spearman {
 	constructor() {
+		this.startX = 0;
 		this.x = 0;
 		this.y = 0;
 		this.w = 32;
@@ -175,7 +176,7 @@ class Spearman {
 		this.scale = 1;
 
 		this.stamp = 0;
-		this.spd = 100;
+		this.spd = 50;
 	}
 
 	setScale(scale) {
@@ -185,7 +186,8 @@ class Spearman {
 	}
 
 	setPos(x, y) {
-		this.x = x;
+		this.startX = x;
+		this.x = this.startX;
 		this.y = y;
 	}
 
@@ -212,7 +214,8 @@ class Spear {
 		this.addY = 0;
 		this.w = 300;
 		this.h = 10;
-		this.rotation = -20;
+		this.startRotation = -20;
+		this.rotation = this.startRotation;
 
 		this.stamp = 0;
 		this.hangFrame = 0;
@@ -250,7 +253,8 @@ class Spear {
 			(90 / this.totalHangFrames) * this.hangFrame;
 		pop();
 
-		this.rotation = -20 + (45 / this.totalHangFrames) * this.hangFrame;
+		this.rotation =
+			this.startRotation + (45 / this.totalHangFrames) * this.hangFrame;
 		this.display();
 	}
 }

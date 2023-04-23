@@ -39,9 +39,10 @@ let variableCount = 2;
 let spearStart = false;
 let cdStamp = 0;
 let seconds = 0;
-let countdowntimer = 60; // Can be changed
+let countdowntimer = 10; // Can be changed
 let milliseconds = 0;
 let timerS = 0;
+let ans
 
 function preload() {
 	sheets.push([
@@ -199,7 +200,9 @@ function draw() {
 	} else if (gamemode == 2) {
 		hurdleAsk();
 		spearScore();
-
+if(ans < 1){
+	spearQuestion(1,5,1,3)
+}
 		milliseconds = millis() - cdStamp;
 		seconds = Math.floor(milliseconds / 1000);
 		if (spearStart) {
@@ -232,14 +235,18 @@ function draw() {
 
 
 		if(timerS > 0 && correct === true){
-		
+	
+			guess = ""
+			hurdleAsk()
 			spearQuestion(1,5,1,3)
 			correct = false
 			}
 			
 			if(timerS < 1){
-			dista = score **2.1	
+			dista = round(score**2.35,2)
 			console.log(dista)
+			textStyle(BOLD)
+			text(dista,wd/2,hig/2)
 			}
 		}
 	
@@ -287,10 +294,14 @@ function mousePressed() {
 		spear.addY = 0;
 		spear.rotation = spear.startRotation;
 		spear.hangFrame = 0;
+		guess = ""
 		spearQuestion(1, 5, 1, 3);
 		score = 0
-		guess = ""
+			// Prevents negative numbers as results
+			
+		
 	}
+	
 }
 function keyPressed() {
 	if (gamemode == 1) {
@@ -383,11 +394,11 @@ function hurdleGuess() {
 	// Submits the guess and checks it when enter or space is hit
 	if (keyCode == 13 || keyCode == 32) {
 		if (guess == ans) {
-			//hurdleQuestion(1, 5, "+", 2);
-			//guess = "";
 			correct = true;
 		} else {
 			console.log("Wrong answer");
+			console.log("ans",ans)
+			console.log("guess",guess)
 			guess = "";
 		}
 	}
@@ -413,6 +424,8 @@ function spearQuestion(max, min, difficulty, variables) {
 	for (let i = 1; i < variables + 1; i++) {
 		comp.push(round(random(max, min)));
 	}
+	console.log(comp)
+	
 	for (let i = 0; i < variables - 1; i++) {
 		temp = round(random(1, 2));
 		if (temp == 1) {
@@ -422,6 +435,7 @@ function spearQuestion(max, min, difficulty, variables) {
 			operators.push("-");
 		}
 	}
+	console.log(operators)
 	ans = comp[0];
 
 	for (let i = 0; i < operators.length; i++) {
@@ -435,12 +449,9 @@ function spearQuestion(max, min, difficulty, variables) {
 			ans *= comp[i + 1];
 		}
 	}
-	// Pre
-	if (ans < 1) {
-		spearQuestion();
-	}
-	// Prevents negative numbers as results
-	if (ans > 0) {
+
+	
+	
 		txt = [];
 		for (let i = 0; i < variables; i++) {
 			txt.push(comp[i]);
@@ -459,11 +470,13 @@ function spearQuestion(max, min, difficulty, variables) {
 		print(txt + ans);
 
 		return txt, ans;
-	}
+	
 }
 function spearGuess() {
 	// This is a copy of the hurdle guess function edited to work for spearGuess()
+	if(timerS>0){
 	hurdleGuess();
+}
 }
 function spearScore() {
 	// A copy of hurdle score made to work with spear throwing

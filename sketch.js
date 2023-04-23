@@ -198,7 +198,7 @@ function draw() {
 		hurdleAsk();
 		hurdleScore();
 	} else if (gamemode == 2) {
-		hurdleAsk();
+		spearAsk();
 		spearScore();
 if(ans < 1){
 	spearQuestion(1,5,1,3)
@@ -489,5 +489,19 @@ function spearScore() {
 	textSize(75);
 	textStyle(BOLD);
 	text("Rigtige svar: " + score, 0, 0);
+	pop();
+}
+// A copy of hurdleask() with different coordinates
+function spearAsk() {
+	push();
+	textAlign(CENTER, CENTER);
+	textSize(75);
+	textStyle(BOLD);
+	if (correct) {
+		fill(0, 150, 0);
+	} else {
+		fill(0);
+	}
+	text(txt + guess, wd / 2, 0 + hig / 15);
 	pop();
 }

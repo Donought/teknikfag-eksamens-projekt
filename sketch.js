@@ -200,7 +200,7 @@ function draw() {
 	} else if (gamemode == 2) {
 		hurdleAsk();
 		spearScore();
-    
+
 		milliseconds = millis() - cdStamp;
 		seconds = Math.floor(milliseconds / 1000);
 		if (spearStart) {
@@ -273,7 +273,7 @@ function mousePressed() {
 		spear.addY = 0;
 		spear.rotation = spear.startRotation;
 		spear.hangFrame = 0;
-    spearQuestion(1, 5, 1, 3);
+		spearQuestion(1, 5, 1, 3);
 	}
 }
 function keyPressed() {
@@ -349,7 +349,7 @@ function hurdleAsk() {
 function hurdleGuess() {
 	// Adds numbers pressed to a string
 
-	if (sprite.die === false) {
+	if (runner.die === false) {
 		for (let i = 0; i < 11; i++) {
 			if (key == i) {
 				guess += key;

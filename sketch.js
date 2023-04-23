@@ -89,7 +89,6 @@ function setup() {
 
   //obs = new Obstacle(frametime, 4000);
 
-  //spearQuestion(1, 5, 1, 3);
 
   //sprite.jump = !sprite.jump;
 
@@ -102,6 +101,7 @@ let lever = false;
 let timerCount = 0;
 function draw() {
   background(220);
+ 
 
   if (0 < gamemode) {
     hurdleBtn.hide();
@@ -179,7 +179,7 @@ function draw() {
 
     hurdleScore();
   } else if (gamemode == 2) {
-    spearGuess();
+    hurdleAsk()
   }
 
   /*push();
@@ -219,9 +219,10 @@ function mousePressed() {
       score = 0;
     }
   } else if (gamemode == 2) {
+    if(txt =="Klik for start"){
+    spearQuestion(1,5,1,3)}
   }
 }
-
 function keyPressed() {
   if (gamemode == 1) {
     if (!correct) {
@@ -229,10 +230,12 @@ function keyPressed() {
     }
     //spearGuess();
   } else if (gamemode == 2) {
-    spearQuestion(1, 5, 1, 2);
+     if (!correct) {
+     spearGuess();
+    }
+    
   }
 }
-
 function hurdleQuestion(max, min, operator, variables) {
   // Comp = component
   comp = [];
@@ -299,6 +302,9 @@ function hurdleGuess() {
     if (key == i) {
       guess += key;
     }
+    if (keyCode == 189 || 109){
+    guess+= "-"
+  } 
   }}
   // Removes last typed number if backspace is hit
   if (keyCode == 8) {
@@ -334,7 +340,6 @@ function hurdleScore() {
   text("Score:" + Math.floor(score), 0, 0);
   pop();
 }
-
 function spearQuestion(max, min, difficulty, variables) {
   comp = [];
   operators = [];
@@ -381,45 +386,8 @@ function spearQuestion(max, min, difficulty, variables) {
   print(txt + ans);
   return txt, ans;
 }
-
 function spearGuess() {
   // This is a copy of the hurdle guess function edited to work for spearGuess()
+hurdleGuess()
 
-  // Adds numbers pressed to a string
-  for (let i = 0; i < 11; i++) {
-    if (key == i) {
-      sguess += key;
-    }
-  }
-  // Removes last typed number if backspace is hit
-  if (keyCode == 8) {
-    if (sguess.length > 0) {
-      sguess = sguess.substring(0, sguess.length - 1);
-      //console.log("cut")
-    }
-  }
-  // Submits the guess and checks it when enter or space is hit
-  if (keyCode == 13 || keyCode == 32) {
-    if (sguess == ans) {
-      sQuestion(1, 5, 1, 3);
-      sguess = "";
-      scorrect = true;
-    } else {
-      console.log("Wrong answer");
-      sguess = "";
-    }
-  }
-  // Score handling
-  if (scorrect === true) {
-    scorrect = false;
-    sscore += 1;
-    console.log("Score", sscore);
-
-    return sscore;
-  }
-  textAlign(CENTER, CENTER);
-  textSize(75);
-  textStyle(BOLD);
-  text(txt + guess, wd / 2, hig / 4, wd / 2, (hig / 4) * 3);
-  return sguess, scorrect;
 }

@@ -180,6 +180,7 @@ function draw() {
     hurdleScore();
   } else if (gamemode == 2) {
     hurdleAsk()
+    spearScore()
   }
 
   /*push();
@@ -296,16 +297,17 @@ function hurdleAsk() {
 }
 function hurdleGuess() {
   // Adds numbers pressed to a string
-  for (let i = 0; i < 11; i++) {
+ 
+  if(sprite.die === false){
+     for (let i = 0; i < 11; i++) {
    
-    if(sprite.die === false){
+    
     if (key == i) {
       guess += key;
     }
-    if (keyCode == 189 || 109){
-    guess+= "-"
-  } 
+  
   }}
+
   // Removes last typed number if backspace is hit
   if (keyCode == 8) {
     if (guess.length > 0) {
@@ -368,7 +370,13 @@ function spearQuestion(max, min, difficulty, variables) {
       ans *= comp[i + 1];
     }
   }
-  txt = [];
+  // Pre
+  if( ans < 1){
+    spearQuestion()
+  }
+// Prevents negative numbers as results
+  if(ans > 0){
+    txt = [];
   for (let i = 0; i < variables; i++) {
     txt.push(comp[i]);
     txt.push(operators[i]);
@@ -384,10 +392,27 @@ function spearQuestion(max, min, difficulty, variables) {
   // Updates txt for clarity
   txt = strr;
   print(txt + ans);
+
   return txt, ans;
-}
+}}
 function spearGuess() {
   // This is a copy of the hurdle guess function edited to work for spearGuess()
 hurdleGuess()
 
+}
+
+function spearScore(){
+// A copy of hurdle score made to work with spear throwing
+if (correct === true) {
+
+  score += 01;
+  console.log("Correct answers: ", score);
+ 
+}
+push();
+textAlign(LEFT, TOP);
+textSize(75);
+textStyle(BOLD);
+text("Rigtige svar: " + score, 0, 0);
+pop();
 }

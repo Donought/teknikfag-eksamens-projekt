@@ -294,10 +294,12 @@ function hurdleAsk() {
 function hurdleGuess() {
   // Adds numbers pressed to a string
   for (let i = 0; i < 11; i++) {
+   
+    if(sprite.die === false){
     if (key == i) {
       guess += key;
     }
-  }
+  }}
   // Removes last typed number if backspace is hit
   if (keyCode == 8) {
     if (guess.length > 0) {

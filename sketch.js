@@ -195,7 +195,6 @@ function draw() {
 		timerCount = 0;
 
 		hurdleAsk();
-
 		hurdleScore();
 	} else if (gamemode == 2) {
 		hurdleAsk();
@@ -228,7 +227,15 @@ function draw() {
 		line(width / 2, 0, width / 2, height);
 		line(0, height / 4, width, height / 4);
 		pop();
-	}
+
+
+
+		if(TimerS > 0 && correct){
+			spearQuestion(1,5,1,3)
+			}
+	
+		}
+	
 
 	/*push();
 	strokeWeight(10);

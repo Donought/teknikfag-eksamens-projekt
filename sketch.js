@@ -39,7 +39,7 @@ let variableCount = 2;
 let spearStart = false;
 let cdStamp = 0;
 let seconds = 0;
-let countdowntimer = 10; // Can be changed
+let countdowntimer = 60; // Can be changed
 let milliseconds = 0;
 let timerS = 0;
 
@@ -214,6 +214,7 @@ function draw() {
 		push();
 		textAlign(CENTER, CENTER);
 		textSize(75);
+		textStyle(BOLD)
 		text(timerS, width / 2, 0, width / 2, height / 4);
 		pop();
 
@@ -230,10 +231,16 @@ function draw() {
 
 
 
-		if(TimerS > 0 && correct){
+		if(timerS > 0 && correct === true){
+		
 			spearQuestion(1,5,1,3)
+			correct = false
 			}
-	
+			
+			if(timerS < 1){
+			dista = score **2.1	
+			console.log(dista)
+			}
 		}
 	
 
@@ -281,6 +288,8 @@ function mousePressed() {
 		spear.rotation = spear.startRotation;
 		spear.hangFrame = 0;
 		spearQuestion(1, 5, 1, 3);
+		score = 0
+		guess = ""
 	}
 }
 function keyPressed() {

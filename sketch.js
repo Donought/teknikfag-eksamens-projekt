@@ -39,10 +39,10 @@ let variableCount = 2;
 let spearStart = false;
 let cdStamp = 0;
 let seconds = 0;
-let countdowntimer = 10; // Can be changed
+let countdowntimer = 60; // Can be changed
 let milliseconds = 0;
 let timerS = 0;
-let ans
+let ans;
 
 function preload() {
 	sheets.push([
@@ -200,9 +200,9 @@ function draw() {
 	} else if (gamemode == 2) {
 		spearAsk();
 		spearScore();
-if(ans < 1){
-	spearQuestion(1,5,1,3)
-}
+		if (ans < 1) {
+			spearQuestion(1, 5, 1, 3);
+		}
 		milliseconds = millis() - cdStamp;
 		seconds = Math.floor(milliseconds / 1000);
 		if (spearStart) {
@@ -217,7 +217,7 @@ if(ans < 1){
 		push();
 		textAlign(CENTER, CENTER);
 		textSize(75);
-		textStyle(BOLD)
+		textStyle(BOLD);
 		text(timerS, width / 2, 0, width / 2, height / 4);
 		pop();
 
@@ -232,24 +232,24 @@ if(ans < 1){
 		line(0, height / 4, width, height / 4);
 		pop();
 
-
-
-		if(timerS > 0 && correct === true){
-	
-			guess = ""
-			hurdleAsk()
-			spearQuestion(1,5,1,3)
-			correct = false
-			}
-			
-			if(timerS < 1){
-			dista = round(score**2.35,2)
-			console.log(dista)
-			textStyle(BOLD)
-			text(dista,wd/2,hig/2)
-			}
+		if (timerS > 0 && correct === true) {
+			guess = "";
+			spearAsk();
+			spearQuestion(1, 5, 1, 3);
+			correct = false;
 		}
-	
+
+		if (timerS < 1) {
+			dista = round(score ** 2.35, 2);
+			console.log(dista);
+			push();
+			textStyle(BOLD);
+			textSize(60);
+			textAlign(LEFT, TOP);
+			text("Længde: " + dista + "m", 0 + 10, hig / 4 + 10);
+			pop();
+		}
+	}
 
 	/*push();
 	strokeWeight(10);
@@ -294,14 +294,11 @@ function mousePressed() {
 		spear.addY = 0;
 		spear.rotation = spear.startRotation;
 		spear.hangFrame = 0;
-		guess = ""
+		guess = "";
 		spearQuestion(1, 5, 1, 3);
-		score = 0
-			// Prevents negative numbers as results
-			
-		
+		score = 0;
+		// Prevents negative numbers as results
 	}
-	
 }
 function keyPressed() {
 	if (gamemode == 1) {
@@ -397,8 +394,8 @@ function hurdleGuess() {
 			correct = true;
 		} else {
 			console.log("Wrong answer");
-			console.log("ans",ans)
-			console.log("guess",guess)
+			console.log("ans", ans);
+			console.log("guess", guess);
 			guess = "";
 		}
 	}
@@ -424,8 +421,8 @@ function spearQuestion(max, min, difficulty, variables) {
 	for (let i = 1; i < variables + 1; i++) {
 		comp.push(round(random(max, min)));
 	}
-	console.log(comp)
-	
+	console.log(comp);
+
 	for (let i = 0; i < variables - 1; i++) {
 		temp = round(random(1, 2));
 		if (temp == 1) {
@@ -435,7 +432,7 @@ function spearQuestion(max, min, difficulty, variables) {
 			operators.push("-");
 		}
 	}
-	console.log(operators)
+	console.log(operators);
 	ans = comp[0];
 
 	for (let i = 0; i < operators.length; i++) {
@@ -450,33 +447,30 @@ function spearQuestion(max, min, difficulty, variables) {
 		}
 	}
 
-	
-	
-		txt = [];
-		for (let i = 0; i < variables; i++) {
-			txt.push(comp[i]);
-			txt.push(operators[i]);
-		}
-		// Variable to hold the string
-		strr = "";
-		// Removes unnecessary operator
-		txt.splice(txt.length - 1, 1, "=");
-		// Places content of txt into string
-		for (let i = 0; i < txt.length; i++) {
-			strr += txt[i];
-		}
-		// Updates txt for clarity
-		txt = strr;
-		print(txt + ans);
+	txt = [];
+	for (let i = 0; i < variables; i++) {
+		txt.push(comp[i]);
+		txt.push(operators[i]);
+	}
+	// Variable to hold the string
+	strr = "";
+	// Removes unnecessary operator
+	txt.splice(txt.length - 1, 1, "=");
+	// Places content of txt into string
+	for (let i = 0; i < txt.length; i++) {
+		strr += txt[i];
+	}
+	// Updates txt for clarity
+	txt = strr;
+	print(txt + ans);
 
-		return txt, ans;
-	
+	return txt, ans;
 }
 function spearGuess() {
 	// This is a copy of the hurdle guess function edited to work for spearGuess()
-	if(timerS>0){
-	hurdleGuess();
-}
+	if (timerS > 0) {
+		hurdleGuess();
+	}
 }
 function spearScore() {
 	// A copy of hurdle score made to work with spear throwing
@@ -485,10 +479,10 @@ function spearScore() {
 		console.log("Correct answers: ", score);
 	}
 	push();
-	textAlign(LEFT, TOP);
+	textAlign(CENTER, CENTER);
 	textSize(75);
 	textStyle(BOLD);
-	text("Rigtige svar: " + score, 0, 0);
+	text("Rigtige svar: " + score, wd / 4, hig / 8);
 	pop();
 }
 // A copy of hurdleask() with different coordinates
@@ -497,11 +491,12 @@ function spearAsk() {
 	textAlign(CENTER, CENTER);
 	textSize(75);
 	textStyle(BOLD);
-	if (correct) {
+	/*if (correct) {
 		fill(0, 150, 0);
 	} else {
 		fill(0);
-	}
-	text(txt + guess, wd / 2, 0 + hig / 15);
+	}*/
+	fill(0);
+	text(txt + guess, (wd / 4) * 3, (hig / 8) * 5);
 	pop();
 }

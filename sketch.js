@@ -34,7 +34,7 @@ let gamemode = 0;
 let min = 1;
 let max = 5;
 let operator = "+";
-let variableCount = 3;
+let variableCount = 2;
 
 let spearStart = false;
 let cdStamp = 0;
@@ -57,7 +57,6 @@ function preload() {
 		loadImage("spritesheet/throw/sheet.png"),
 	]);
 }
-
 function setup() {
 	createCanvas(window.innerWidth, window.innerHeight);
 
@@ -111,15 +110,12 @@ function setup() {
 
 	//obs = new Obstacle(frametime, 4000);
 
-	//spearQuestion(1, 5, 1, 3);
-
 	//sprite.jump = !sprite.jump;
 
 	txt = "Klik for start";
 
 	//sprite.jump = !sprite.jump;
 }
-
 let stamp;
 let lever = false;
 let timerCount = 0;
@@ -202,6 +198,9 @@ function draw() {
 
 		hurdleScore();
 	} else if (gamemode == 2) {
+		hurdleAsk();
+		spearScore();
+    
 		milliseconds = millis() - cdStamp;
 		seconds = Math.floor(milliseconds / 1000);
 		if (spearStart) {
@@ -274,9 +273,9 @@ function mousePressed() {
 		spear.addY = 0;
 		spear.rotation = spear.startRotation;
 		spear.hangFrame = 0;
+    spearQuestion(1, 5, 1, 3);
 	}
 }
-
 function keyPressed() {
 	if (gamemode == 1) {
 		if (!correct) {
@@ -284,10 +283,13 @@ function keyPressed() {
 		}
 		//spearGuess();
 	} else if (gamemode == 2) {
+		if (!correct) {
+			spearGuess();
+		}
 	}
 }
-
 function hurdleQuestion(max, min, operator, variables) {
+	// Comp = component
 	comp = [];
 	for (let i = 1; i < variables + 1; i++) {
 		comp.push(round(random(max, min)));
@@ -330,7 +332,6 @@ function hurdleQuestion(max, min, operator, variables) {
 	//print(txt + ans);
 	return txt, ans;
 }
-
 function hurdleAsk() {
 	push();
 	textAlign(CENTER, CENTER);
@@ -345,14 +346,17 @@ function hurdleAsk() {
 	pop();
 	// console.log(ans)
 }
-
 function hurdleGuess() {
 	// Adds numbers pressed to a string
-	for (let i = 0; i < 11; i++) {
-		if (key == i) {
-			guess += key;
+
+	if (sprite.die === false) {
+		for (let i = 0; i < 11; i++) {
+			if (key == i) {
+				guess += key;
+			}
 		}
 	}
+
 	// Removes last typed number if backspace is hit
 	if (keyCode == 8) {
 		if (guess.length > 0) {
@@ -373,7 +377,6 @@ function hurdleGuess() {
 	}
 	return guess, correct;
 }
-
 function hurdleScore() {
 	if (correct === true) {
 		//correct = false;
@@ -386,12 +389,8 @@ function hurdleScore() {
 	textSize(75);
 	textStyle(BOLD);
 	text("Score:" + Math.floor(score), 0, 0);
-	//text("Score:" + score, wd / 12, 0 + hig / 15);
-	/*textAlign(LEFT, CENTER);
-	text(score, wd / 6.8, 0 + hig / 15);*/
 	pop();
 }
-
 function spearQuestion(max, min, difficulty, variables) {
 	comp = [];
 	operators = [];
@@ -420,63 +419,46 @@ function spearQuestion(max, min, difficulty, variables) {
 			ans *= comp[i + 1];
 		}
 	}
-	txt = [];
-	for (let i = 0; i < variables; i++) {
-		txt.push(comp[i]);
-		txt.push(operators[i]);
+	// Pre
+	if (ans < 1) {
+		spearQuestion();
 	}
-	// Variable to hold the string
-	strr = "";
-	// Removes unnecessary operator
-	txt.splice(txt.length - 1, 1, "=");
-	// Places content of txt into string
-	for (let i = 0; i < txt.length; i++) {
-		strr += txt[i];
-	}
-	// Updates txt for clarity
-	txt = strr;
-	print(txt + ans);
-	return txt, ans;
-}
+	// Prevents negative numbers as results
+	if (ans > 0) {
+		txt = [];
+		for (let i = 0; i < variables; i++) {
+			txt.push(comp[i]);
+			txt.push(operators[i]);
+		}
+		// Variable to hold the string
+		strr = "";
+		// Removes unnecessary operator
+		txt.splice(txt.length - 1, 1, "=");
+		// Places content of txt into string
+		for (let i = 0; i < txt.length; i++) {
+			strr += txt[i];
+		}
+		// Updates txt for clarity
+		txt = strr;
+		print(txt + ans);
 
+		return txt, ans;
+	}
+}
 function spearGuess() {
 	// This is a copy of the hurdle guess function edited to work for spearGuess()
-
-	// Adds numbers pressed to a string
-	for (let i = 0; i < 11; i++) {
-		if (key == i) {
-			sguess += key;
-		}
+	hurdleGuess();
+}
+function spearScore() {
+	// A copy of hurdle score made to work with spear throwing
+	if (correct === true) {
+		score += 01;
+		console.log("Correct answers: ", score);
 	}
-	// Removes last typed number if backspace is hit
-	if (keyCode == 8) {
-		if (sguess.length > 0) {
-			sguess = sguess.substring(0, sguess.length - 1);
-			//console.log("cut")
-		}
-	}
-	// Submits the guess and checks it when enter or space is hit
-	if (keyCode == 13 || keyCode == 32) {
-		if (sguess == ans) {
-			sQuestion(1, 5, 1, 3);
-			sguess = "";
-			scorrect = true;
-		} else {
-			console.log("Wrong answer");
-			sguess = "";
-		}
-	}
-	// Score handling
-	if (scorrect === true) {
-		scorrect = false;
-		sscore += 1;
-		console.log("Score", sscore);
-
-		return sscore;
-	}
-	textAlign(CENTER, CENTER);
+	push();
+	textAlign(LEFT, TOP);
 	textSize(75);
 	textStyle(BOLD);
-	text(txt + guess, wd / 2, 0 + hig / 15);
-	return sguess, scorrect;
+	text("Rigtige svar: " + score, 0, 0);
+	pop();
 }

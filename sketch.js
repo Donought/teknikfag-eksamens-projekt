@@ -328,6 +328,7 @@ function hurdleQuestion(max, min, operator, variables) {
 		if (operator == "-") {
 			ans -= comp[i];
 		}
+	// Do not use for more than 3 variables as it is unequipped to deal with the order
 		if (operator == "*") {
 			ans *= comp[i];
 		}

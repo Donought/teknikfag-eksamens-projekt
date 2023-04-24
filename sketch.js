@@ -1,5 +1,23 @@
 let frametime = 100;
 
+// Edit this to change difficulty for hurdling
+let startTime = 6000;
+let endTime = 2000;
+let totalStreak = 10;
+
+let hMin = 1;
+let hMax = 5;
+let hOperator = "+";
+let hVariableCount = 2;
+
+// Edit this to change difficulty for spear throw
+let countdowntimer = 60;
+
+let sMin = 1;
+let sMax = 5;
+let sVariableCount = 2;
+
+// Let variables from here on out be
 let data;
 let sheet;
 
@@ -21,25 +39,16 @@ let sguess = "";
 let scorrect = false;
 let sscore = 0;
 
-let startTime = 6000;
-let endTime = 2000;
-let totalStreak = 10;
-let streak = 0;
-
 let hurdleBtn;
 let spearBtn;
 
-let gamemode = 0;
+let streak = 0;
 
-let min = 1;
-let max = 5;
-let operator = "+";
-let variableCount = 2;
+let gamemode = 0;
 
 let spearStart = false;
 let cdStamp = 0;
 let seconds = 0;
-let countdowntimer = 60; // Can be changed
 let milliseconds = 0;
 let timerS = 0;
 let ans;
@@ -148,7 +157,7 @@ function draw() {
 				if (correct) {
 					runner.jump = true;
 					correct = false;
-					hurdleQuestion(min, max, operator, variableCount);
+					hurdleQuestion(hMin, hMax, hOperator, hVariableCount);
 					if (streak < totalStreak) {
 						streak++;
 					}
@@ -201,7 +210,7 @@ function draw() {
 		spearAsk();
 		spearScore();
 		if (ans < 1) {
-			spearQuestion(1, 5, 1, 3);
+			spearQuestion(sMin, sMax, 1, sVariableCount);
 		}
 		milliseconds = millis() - cdStamp;
 		seconds = Math.floor(milliseconds / 1000);
@@ -235,7 +244,7 @@ function draw() {
 		if (timerS > 0 && correct === true) {
 			guess = "";
 			spearAsk();
-			spearQuestion(1, 5, 1, 3);
+			spearQuestion(sMin, sMax, 1, sVariableCount);
 			correct = false;
 		}
 
@@ -281,7 +290,7 @@ function mousePressed() {
 					400 + (runner.totalHangFrames / 2) * 100
 				)
 			);
-			hurdleQuestion(min, max, operator, variableCount);
+			hurdleQuestion(hMin, hMax, hOperator, hVariableCount);
 			runner.die = false;
 			runner.addY = 0;
 			streak = 0;
@@ -295,7 +304,7 @@ function mousePressed() {
 		spear.rotation = spear.startRotation;
 		spear.hangFrame = 0;
 		guess = "";
-		spearQuestion(1, 5, 1, 3);
+		spearQuestion(sMin, sMax, 1, sVariableCount);
 		score = 0;
 		// Prevents negative numbers as results
 	}
@@ -328,7 +337,7 @@ function hurdleQuestion(max, min, operator, variables) {
 		if (operator == "-") {
 			ans -= comp[i];
 		}
-	// Do not use for more than 3 variables as it is unequipped to deal with the order
+		// Do not use for more than 3 variables as it is unequipped to deal with the order
 		if (operator == "*") {
 			ans *= comp[i];
 		}

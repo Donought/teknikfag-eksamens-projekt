@@ -15,7 +15,7 @@ let countdowntimer = 60;
 
 let sMin = 1;
 let sMax = 5;
-let sVariableCount = 2;
+let sVariableCount = 3;
 
 // Let variables from here on out be
 let data;

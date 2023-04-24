@@ -238,7 +238,6 @@ class Spear {
 		if (this.stamp < millis() && this.hangFrame < this.totalHangFrames) {
 			this.stamp = millis() + interval;
 			this.hangFrame++;
-			console.log("bruh");
 		}
 		if (this.totalHangFrames < this.hangFrame) {
 			/*this.die = false;

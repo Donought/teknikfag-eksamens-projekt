@@ -383,7 +383,7 @@ function hurdleAsk() {
 function hurdleGuess() {
 	// Adds numbers pressed to a string
 
-	if (runner.die === false) {
+	if (runner.die === false && ans != undefined) {
 		for (let i = 0; i < 11; i++) {
 			if (key == i) {
 				guess += key;
